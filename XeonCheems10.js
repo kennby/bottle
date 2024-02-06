@@ -229,7 +229,7 @@ module.exports = SenseiOfc = async (SenseiOfc, m, chatUpdate, store) => {
         const isGroupOwner = m.isGroup ? (groupOwner ? groupOwner : groupAdmins).includes(m.sender) : false
         const AntiNsfw = m.isGroup ? ntnsfw.includes(from) : false
         //anti media
-        const isMedia = m.mtype
+        const isErikMedia = m.mtype
         //user status
         const isUser = verifieduser.includes(sender)
         const TheCreator = [botNumber, ...owner].map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender)
@@ -758,8 +758,8 @@ SenseiOfc.sendMessage(`${ownernumber}@s.whatsapp.net`,{text: `Hi Owner! wa.me/${
     return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant }})
         }
   }
-        if (db.data.chats[m.chat].image && isMedia) {
-    if(isMedia === "imageMessage"){
+        if (db.data.chats[m.chat].image && isErikMedia) {
+    if(isErikMedia === "imageMessage"){
         if (TheCreator || isAdmins || !isBotAdmins){		  
         } else {
           replygc(`\`\`\`「 Image Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-imagen para este grupo`)
@@ -767,8 +767,8 @@ SenseiOfc.sendMessage(`${ownernumber}@s.whatsapp.net`,{text: `Hi Owner! wa.me/${
         }
     }
   }
-        if (db.data.chats[m.chat].antivideo && isMedia) {
-    if(isMedia === "videoMessage"){
+        if (db.data.chats[m.chat].antivideo && isErikMedia) {
+    if(isErikMedia === "videoMessage"){
         if (TheCreator || isAdmins || !isBotAdmins){		  
         } else {
           replygc(`\`\`\`「 Video Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-video para este grupo`)
@@ -776,8 +776,8 @@ SenseiOfc.sendMessage(`${ownernumber}@s.whatsapp.net`,{text: `Hi Owner! wa.me/${
         }
     }
   }
-        if (db.data.chats[m.chat].antisticker && isMedia) {
-    if(isMedia === "stickerMessage"){
+        if (db.data.chats[m.chat].antisticker && isErikMedia) {
+    if(isErikMedia === "stickerMessage"){
         if (TheCreator || isAdmins || !isBotAdmins){		  
         } else {
           replygc(`\`\`\`「 Sticker Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-sticker para este grupo`)
@@ -785,8 +785,8 @@ SenseiOfc.sendMessage(`${ownernumber}@s.whatsapp.net`,{text: `Hi Owner! wa.me/${
         }
     }
   }
-        if (db.data.chats[m.chat].antiaudio && isMedia) {
-    if(isMedia === "audioMessage"){
+        if (db.data.chats[m.chat].antiaudio && isErikMedia) {
+    if(isErikMedia === "audioMessage"){
         if (TheCreator || isAdmins || !isBotAdmins){		  
         } else {
           replygc(`\`\`\`「 Audio Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-audio para este grupo`)
@@ -794,8 +794,8 @@ SenseiOfc.sendMessage(`${ownernumber}@s.whatsapp.net`,{text: `Hi Owner! wa.me/${
         }
     }
   }
-       if (db.data.chats[m.chat].antipoll && isMedia) {
-    if(isMedia === "pollCreationMessage"){
+       if (db.data.chats[m.chat].antipoll && isErikMedia) {
+    if(isErikMedia === "pollCreationMessage"){
         if (TheCreator || isAdmins || !isBotAdmins){		  
         } else {
           replygc(`\`\`\`「 Poll Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-encuesta para este grupo`)
@@ -803,8 +803,8 @@ SenseiOfc.sendMessage(`${ownernumber}@s.whatsapp.net`,{text: `Hi Owner! wa.me/${
         }
     }
   }
-       if (db.data.chats[m.chat].antilocation && isMedia) {
-    if(isMedia === "locationMessage"){
+       if (db.data.chats[m.chat].antilocation && isErikMedia) {
+    if(isErikMedia === "locationMessage"){
         if (TheCreator || isAdmins || !isBotAdmins){		  
         } else {
           replygc(`\`\`\`「 Location Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-ubicación para este grupo`)
@@ -812,8 +812,8 @@ SenseiOfc.sendMessage(`${ownernumber}@s.whatsapp.net`,{text: `Hi Owner! wa.me/${
         }
     }
   }
-       if (db.data.chats[m.chat].antidocument && isMedia) {
-    if(isMedia === "documentMessage"){
+       if (db.data.chats[m.chat].antidocument && isErikMedia) {
+    if(isErikMedia === "documentMessage"){
         if (TheCreator || isAdmins || !isBotAdmins){		  
         } else {
           replygc(`\`\`\`「 Document Detected 」\`\`\`\n\nLo siento, pero tengo que eliminarlo porque el administrador/propietario ha activado el anti-documento para este grupo.`)
@@ -821,8 +821,8 @@ SenseiOfc.sendMessage(`${ownernumber}@s.whatsapp.net`,{text: `Hi Owner! wa.me/${
         }
     }
   }
-      if (db.data.chats[m.chat].anticontact && isMedia) {
-    if(isMedia === "contactMessage"){
+      if (db.data.chats[m.chat].anticontact && isErikMedia) {
+    if(isErikMedia === "contactMessage"){
         if (TheCreator || isAdmins || !isBotAdmins){		  
         } else {
           replygc(`\`\`\`「 Contact Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-contacto para este grupo`)
