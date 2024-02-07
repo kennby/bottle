@@ -53,30 +53,21 @@ fs.watchFile(file, () => {
 
 //actualizar infomacion (no modificar si no sabe)
 global.setBotInfo = (newBotname, newOwnername, newLocation, newOwnernumber, newytname, newsocial, newThemeemoji, newWebsiteX, newWagc) => {
-  global.botname = newBotname.trim()
-  console.log(chalk.yellowBright(`Nombre del bot actualizado a: ${newBotname}`))
-
-  global.ownername = newOwnername.trim()
-  console.log(chalk.yellowBright(`Nombre del propietario actualizado a: ${newOwnername}`))
-
-  global.location = newLocation.trim()
-  console.log(chalk.yellowBright(`Ubicación actualizada a: ${newLocation}`))
-
-  global.ownernumber = newOwnernumber.trim()
-  console.log(chalk.yellowBright(`Número del propietario actualizado a: ${newOwnernumber}`))
-
-  global.ytname = newytname.trim()
-  console.log(chalk.yellowBright(`Nombre del canal de YouTube actualizado a: ${newytname}`))
-
-  global.socialm = newsocial.trim()
-  console.log(chalk.yellowBright(`Social media del propietario actualizado a: ${newsocial}`))
-
-  global.themeemoji = newThemeemoji.trim()
-  console.log(chalk.yellowBright(`Sitio web del propietario actualizado a: ${newThemeemoji}`))
-
-  global.websitex = newWebsiteX.trim()
-  console.log(chalk.yellowBright(`Sitio web X actualizado a: ${newWebsiteX}`))
-	
-  global.wagc = newWagc.trim()
-  console.log(chalk.yellowBright(`Sitio web X actualizado a: ${newWagc}`))
+    const updates = {
+        botname: newBotname.trim(),
+        ownername: newOwnername.trim(),
+        location: newLocation.trim(),
+        ownernumber: newOwnernumber.trim(),
+        ytname: newytname.trim(),
+        socialm: newsocial.trim(),
+        themeemoji: newThemeemoji.trim(),
+        websitex: newWebsiteX.trim(),
+        wagc: newWagc.trim()
+    }
+    for (const key in updates) {
+        if (updates.hasOwnProperty(key)) {
+            global[key] = updates[key]
+            console.log(chalk.yellowBright(`${key} actualizado a: ${updates[key]}`))
+        }
+    }
 }
