@@ -1496,6 +1496,16 @@ case 'reportbug': {
     })
 }
 break
+case 'nombrebot': case 'setnamebot': {
+    if (!TheCreator) return StickOwner();
+    if (args.length === 0) {
+        return replygc(`El comando está incompleto. Debe ser así: setnombrebot <NuevoNombreBot>`);
+    }
+    let newBotname = args.join(' ').trim();
+    setBotInfo(newBotname);
+    replygc(`Nombre del bot cambiado a: ${newBotname}`);
+}
+break
 case 'reiniciar': case 'actualizar':
     if (!TheCreator) return StickOwner()
     replygc(`El reinicio se completará en segundos`);
@@ -1780,6 +1790,105 @@ break
             })
         }
         break
+case 'setnombrebot':
+case 'nombrebot': {
+    if (!TheCreator) return StickOwner()
+    if (args.length === 0) {
+        return replygc(`El comando está incompleto. Debe ser así: setnombrebot <NuevoNombreBot>`)
+    }
+    let newBotname = args.join(' ').trim()
+    setBotInfo(newBotname)
+    replygc(`Nombre del bot cambiado a: ${newBotname}`)
+}
+break
+case 'setnombrepropietario':
+case 'nombrepropietario': {
+    if (!TheCreator) return StickOwner()
+    if (args.length === 0) {
+        return replygc(`El comando está incompleto. Debe ser así: setnombrepropietario <NuevoNombrePropietario>`)
+    }
+    let newOwnername = args.join(' ').trim()
+    setBotInfo(global.botname, newOwnername, global.location, global.ownernumber, global.ytname, global.socialm, global.themeemoji, global.websitex, global.wagc)
+    replygc(`Nombre del propietario cambiado a: ${newOwnername}`)
+}
+break
+case 'setubicacion':
+case 'ubicacion': {
+    if (!TheCreator) return StickOwner()
+    if (args.length === 0) {
+        return replygc(`El comando está incompleto. Debe ser así: setubicacion <NuevaUbicación>`)
+    }
+    let newLocation = args.join(' ').trim()
+    setBotInfo(global.botname, global.ownername, newLocation, global.ownernumber, global.ytname, global.socialm, global.themeemoji, global.websitex, global.wagc)
+    replygc(`Ubicación cambiada a: ${newLocation}`)
+}
+break
+case 'setnumeropropietario':
+case 'numeropropietario': {
+    if (!TheCreator) return StickOwner()
+    if (args.length === 0) {
+        return replygc(`El comando está incompleto. Debe ser así: setnumeropropietario <NuevoNúmero>`)
+    }
+    let newOwnernumber = args.join(' ').trim()
+    setBotInfo(global.botname, global.ownername, global.location, newOwnernumber, global.ytname, global.socialm, global.themeemoji, global.websitex, global.wagc)
+    replygc(`Número del propietario cambiado a: ${newOwnernumber}`)
+}
+break
+case 'setnombreyt':
+case 'nombreyt': {
+    if (!TheCreator) return StickOwner()
+    if (args.length === 0) {
+        return replygc(`El comando está incompleto. Debe ser así: setnombreyt <NuevoNombreYT>`)
+    }
+    let newYtname = args.join(' ').trim()
+    setBotInfo(global.botname, global.ownername, global.location, global.ownernumber, newYtname, global.socialm, global.themeemoji, global.websitex, global.wagc)
+    replygc(`Nombre del canal de YouTube cambiado a: ${newYtname}`)
+}
+break
+case 'setsocialmedia':
+case 'socialmedia': {
+    if (!TheCreator) return StickOwner()
+    if (args.length === 0) {
+        return replygc(`El comando está incompleto. Debe ser así: setsocialmedia <NuevaRedSocial>`)
+    }
+    let newSocialm = args.join(' ').trim()
+    setBotInfo(global.botname, global.ownername, global.location, global.ownernumber, global.ytname, newSocialm, global.themeemoji, global.websitex, global.wagc)
+    replygc(`Redes sociales del propietario cambiadas a: ${newSocialm}`)
+}
+break
+case 'setemojitema':
+case 'emojitema': {
+    if (!TheCreator) return StickOwner()
+    if (args.length === 0) {
+        return replygc(`El comando está incompleto. Debe ser así: setemojitema <NuevoEmojiTema>`)
+    }
+    let newThemeemoji = args.join(' ').trim()
+    setBotInfo(global.botname, global.ownername, global.location, global.ownernumber, global.ytname, global.socialm, newThemeemoji, global.websitex, global.wagc)
+    replygc(`Emoji del tema cambiado a: ${newThemeemoji}`)
+}
+break
+case 'setwebsitex':
+case 'websitex': {
+    if (!TheCreator) return StickOwner()
+    if (args.length === 0) {
+        return replygc(`El comando está incompleto. Debe ser así: setwebsitex <NuevoSitioWebPropietario>`)
+    }
+    let newWebsitex = args.join(' ').trim()
+    setBotInfo(global.botname, global.ownername, global.location, global.ownernumber, global.ytname, global.socialm, global.themeemoji, newWebsitex, global.wagc)
+    replygc(`Sitio web del propietario cambiado a: ${newWebsitex}`)
+}
+break
+case 'setlink':
+case 'newlink': {
+    if (!TheCreator) return StickOwner()
+    if (args.length === 0) {
+        return replygc(`El comando está incompleto. Debe ser así: setwebsitex <NuevoSitioWebX>`)
+    }
+    let newWagc = args.join(' ').trim()
+    setBotInfo(global.botname, global.ownername, global.location, global.ownernumber, global.ytname, global.socialm, global.themeemoji, global.websitex, newWagc)
+    replygc(`Sitio web X cambiado a: ${newWagc}`)
+}
+break
 case 'activar': {
     if (args.length < 1) return replygc('Especifica la función que deseas activar.\nEjemplo: activar adminevent\n\nLas funciones disponibles son:\n -welcome\n -antilink\n -antilinkgc\n -antilocation\n -anticontact\n -anticontact\n -anticontact\n -antidocument\n -antimedia\n -antiviewonce\n -antibot\n -antivirtex\n -antivirtex\n -antivideo\n -antiimage\n -antisticker\n -antipoll\n -antiforeign\n -antiaudio\n -adminevent\n -groupevent\n -ephemeral\n -autoswview\n -autostatusview\n -unavailable\n -autorecordtype\n -autorecord\n -autotype\n -autobio\n -autosticker\n -autoblock\n -sologc\n -solopv\n -onlyindia\n -onlyindonumber')
 
