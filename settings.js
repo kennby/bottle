@@ -51,7 +51,8 @@ fs.watchFile(file, () => {
     require(file)
 })
 
-//actualizar infomacion (no modificar si no sabe)
+//actualizar infomacion (no modificar si no sabe) 
+// senseiOfc
 global.setBotInfo = (newBotname, newOwnername, newLocation, newOwnernumber, newytname, newsocial, newThemeemoji, newWebsiteX, newWagc) => {
     const updates = {
         botname: newBotname.trim(),
