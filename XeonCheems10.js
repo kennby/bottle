@@ -4115,14 +4115,14 @@ case 'style': case 'styletext': {
   replygc(teks)
 }
 break
-case 'yts': case 'ytsearch': {
+case 'yts': case 'playlist': case 'ytsearch': {
   if (!text) return replygc(`Ejemplo : ${prefix + command} historia wa anime`)
   let yts = require("yt-search")
   let search = await yts(text)
   let teks = 'Búsqueda en YouTube\n\n Resultado de ' + text + '\n\n'
   let no = 1
   for (let i of search.all) {
-    teks += `${themeemoji} Número : ${no++}\n${themeemoji} Tipo : ${i.type}\n${themeemoji} ID del Video : ${i.videoId}\n${themeemoji} Título : ${i.title}\n${themeemoji} Vistas : ${i.views}\n${themeemoji} Duración : ${i.timestamp}\n${themeemoji} Subido : ${i.ago}\n${themeemoji} URL : ${i.url}\n\n─────────────────\n\n`
+    teks += `🌟 *N° :* ${no++}\n🎞️ *Tipo :* ${i.type}\n🆔 *ID del video :* ${i.videoId}\n📜 *Título :* ${i.title}\n👁️‍🗨️ *Vistas :* ${i.views}\n⏱️ *Duración :* ${i.timestamp}\n📅 *Subido :* ${i.ago}\n🔗 *Url :* ${i.url}\n━━━━━━━━━━━━━━\n\n`
   }
   SenseiOfc.sendMessage(m.chat, { image: { url: search.all[0].thumbnail }, caption: teks }, { quoted: m })
 }
