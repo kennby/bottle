@@ -367,7 +367,7 @@ module.exports = SenseiOfc = async (SenseiOfc, m, chatUpdate, store) => {
 			amount: {
 				value: 91929291929,
 				offset: 1000,
-				currencyCode: "INR"
+				currencyCode: "PEN"
 			}
 		}
 	}
@@ -2850,7 +2850,7 @@ ${cpus[0] ? `*_💻 Uso total de CPU 💻_*
 *╚══════════════╝*`.trim()
 	SenseiOfc.relayMessage(m.chat,  {
         requestPaymentMessage: {
-          currencyCodeIso4217: 'INR',
+          currencyCodeIso4217: 'PEN',
           amount1000: 999999999,
           requestFrom: m.sender,
           noteMessage: {
@@ -2881,7 +2881,7 @@ ${themeemoji} URL: ${repoData.html_url}
  `.trim()
       await SenseiOfc.relayMessage(m.chat,  {
         requestPaymentMessage: {
-          currencyCodeIso4217: 'INR',
+          currencyCodeIso4217: 'PEN',
           amount1000: 69000,
           requestFrom: m.sender,
           noteMessage: {
@@ -6756,7 +6756,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -6867,7 +6867,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -6978,7 +6978,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -7089,7 +7089,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -7200,7 +7200,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -7311,7 +7311,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -7422,7 +7422,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -7533,7 +7533,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -7644,7 +7644,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -7755,7 +7755,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -7866,7 +7866,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -7977,7 +7977,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -8088,7 +8088,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -8199,7 +8199,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -8310,7 +8310,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -8421,7 +8421,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -8532,7 +8532,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
@@ -8643,7 +8643,7 @@ if (typemenu === 'v1') {
                 } else if (typemenu === 'v6') {
                     SenseiOfc.relayMessage(m.chat,  {
                        requestPaymentMessage: {
-                          currencyCodeIso4217: 'INR',
+                          currencyCodeIso4217: 'PEN',
                           amount1000: '9999999900',
                           requestFrom: m.sender,
                           noteMessage: {
