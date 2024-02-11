@@ -4137,7 +4137,7 @@ case 'play': case 'song': {
   await SenseiOfc.sendMessage(m.chat, {
     audio: fs.readFileSync(pl.path),
     fileName: anup3k.title + '.mp3',
-    mimetype: 'audio/mp4', ptt: true,
+    mimetype: 'audio/mp4', ptt: false,
     contextInfo: {
       externalAdReply: {
         title: anup3k.title,
@@ -4187,7 +4187,7 @@ case 'ytmp3': case 'ytaudio': {
   let audio = await xeonaudp3.mp3(text)
   await SenseiOfc.sendMessage(m.chat, {
     audio: fs.readFileSync(audio.path),
-    mimetype: 'audio/mp4', ptt: true,
+    mimetype: 'audio/mp4', ptt: false,
     contextInfo: {
       externalAdReply: {
         title: audio.meta.title,
@@ -4239,7 +4239,7 @@ case 'tiktokaudio':
   if (!q.includes('tiktok')) return replygc(`¡Enlace inválido!`)
   require('./lib/tiktok').Tiktok(q).then(data => {
     const xeontikmp3 = { url: data.audio }
-    SenseiOfc.sendMessage(m.chat, { audio: xeontikmp3, mimetype: 'audio/mp4', ptt: true }, { quoted: m })
+    SenseiOfc.sendMessage(m.chat, { audio: xeontikmp3, mimetype: 'audio/mp4', ptt: false }, { quoted: m })
   })
   break
 case 'google':
