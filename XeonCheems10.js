@@ -5491,7 +5491,7 @@ case 'lagarto': {
 break
 case 'spank':
 case 'azotar': {
-    axios.get(`https://nekos.life/api/v2/img/${command}`)
+    axios.get(`https://nekos.life/api/v2/img/spank`)
         .then(({ data }) => {
             SenseiOfc.sendImageAsSticker(from, data.url, m, { packname: global.packname, author: global.author });
         });
@@ -5499,7 +5499,7 @@ case 'azotar': {
 break
 case 'meow':
 case 'maullar': {
-    axios.get(`https://nekos.life/api/v2/img/${command}`)
+    axios.get(`https://nekos.life/api/v2/img/meow`)
         .then(({ data }) => {
             SenseiOfc.sendImageAsSticker(from, data.url, m, { packname: global.packname, author: global.author });
         });
@@ -5507,7 +5507,7 @@ case 'maullar': {
 break
 case 'tickle':
 case 'cosquillas': {
-    axios.get(`https://nekos.life/api/v2/img/${command}`)
+    axios.get(`https://nekos.life/api/v2/img/tickle`)
         .then(({ data }) => {
             SenseiOfc.sendImageAsSticker(from, data.url, m, { packname: global.packname, author: global.author });
         });
