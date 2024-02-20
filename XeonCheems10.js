@@ -1,15 +1,5 @@
 require('./lib/listmenu')
-const {
-    BufferJSON,
-    WA_DEFAULT_EPHEMERAL,
-    generateWAMessageFromContent,
-    proto,
-    generateWAMessageContent,
-    generateWAMessage,
-    prepareWAMessageMedia,
-    areJidsSameUser,
-    getContentType
-} = require('@whiskeysockets/baileys')
+const { BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser, getContentType } = require('@whiskeysockets/baileys')
 const os = require('os')
 const fs = require('fs')
 const fsx = require('fs-extra')
@@ -33,67 +23,17 @@ const googleTTS = require('google-tts-api')
 const jsobfus = require('javascript-obfuscator')
 const {translate} = require('@vitalets/google-translate-api')
 const scp2 = require('./lib/scraper2') 
-const {
-    exec,
-    spawn,
-    execSync
-} = require("child_process")
+const { exec, spawn, execSync } = require("child_process")
 const {
     performance
 } = require('perf_hooks')
 const more = String.fromCharCode(8206)
 const readmore = more.repeat(4001)
-const {
-    TelegraPh,
-    UploadFileUgu,
-    webp2mp4File,
-    floNime
-} = require('./lib/uploader')
-const {
-    toAudio,
-    toPTT,
-    toVideo,
-    ffmpeg,
-    addExifAvatar
-} = require('./lib/converter')
-const {
-    smsg,
-    getGroupAdmins,
-    formatp,
-    formatDate,
-    getTime,
-    isUrl,
-    await,
-    sleep,
-    clockString,
-    msToDate,
-    sort,
-    toNumber,
-    enumGetKey,
-    runtime,
-    fetchJson,
-    getBuffer,
-    json,
-    delay,
-    format,
-    logic,
-    generateProfilePicture,
-    parseMention,
-    getRandom,
-    pickRandom,
-    fetchBuffer,
-    buffergif,
-    totalcase
-} = require('./lib/myfunc')
-//prem owner function
-const {
-    addPremiumUser,
-    getPremiumExpired,
-    getPremiumPosition,
-    expiredPremiumCheck,
-    checkPremiumUser,
-    getAllPremiumUser,
-} = require('./lib/premiun')
+const { TelegraPh, UploadFileUgu, webp2mp4File, floNime } = require('./lib/uploader')
+const { toAudio, toPTT, toVideo, ffmpeg, addExifAvatar } = require('./lib/converter')
+const { smsg, getGroupAdmins, formatp, formatDate, getTime, isUrl, await, sleep, clockString, msToDate, sort, toNumber, enumGetKey, runtime, fetchJson, getBuffer, json, delay, format, logic, generateProfilePicture, parseMention, getRandom, pickRandom, fetchBuffer, buffergif, totalcase } = require('./lib/myfunc')
+// Funciones del propietario premium
+const { addPremiumUser, getPremiumExpired, getPremiumPosition, expiredPremiumCheck, checkPremiumUser, getAllPremiumUser } = require('./lib/premiun')
 //data
 let ntnsfw = JSON.parse(fs.readFileSync('./src/data/function/nsfw.json'))
 let bad = JSON.parse(fs.readFileSync('./src/data/function/badword.json'))
@@ -166,13 +106,7 @@ const reSize = async(buffer, ukur1, ukur2) => {
 //module
 module.exports = SenseiOfc = async (SenseiOfc, m, chatUpdate, store) => {
     try {
-        const {
-            type,
-            quotedMsg,
-            mentioned,
-            now,
-            fromMe
-        } = m
+        const { type, quotedMsg, mentioned, now, fromMe } = m
         var body = (m.mtype === 'conversation') ? m.message.conversation : (m.mtype == 'imageMessage') ? m.message.imageMessage.caption : (m.mtype == 'videoMessage') ? m.message.videoMessage.caption : (m.mtype == 'extendedTextMessage') ? m.message.extendedTextMessage.text : (m.mtype == 'buttonsResponseMessage') ? m.message.buttonsResponseMessage.selectedButtonId : (m.mtype == 'listResponseMessage') ? m.message.listResponseMessage.singleSelectReply.selectedRowId : (m.mtype == 'templateButtonReplyMessage') ? m.message.templateButtonReplyMessage.selectedId : (m.mtype === 'messageContextInfo') ? (m.message.buttonsResponseMessage?.selectedButtonId || m.message.listResponseMessage?.singleSelectReply.selectedRowId || m.text) : ''
         var budy = (typeof m.text == 'string' ? m.text : '')
         //prefix 1
@@ -317,7 +251,7 @@ module.exports = SenseiOfc = async (SenseiOfc, m, chatUpdate, store) => {
                ...(m.chat ? {  remoteJid: "status@broadcast"  } : {}) 
             }, 
                message: {  
-                  "imageMessage": { 
+                  "imageMessage": {
                      "url": "https://mmg.whatsapp.net/d/f/At0x7ZdIvuicfjlf9oWS6A3AR9XPh0P-hZIVPLsI70nM.enc", 
                      "mimetype": "image/jpeg", 
                      "caption": botname,
@@ -336,8 +270,8 @@ module.exports = SenseiOfc = async (SenseiOfc, m, chatUpdate, store) => {
             }
             
             //Fake quoted
-        const fpay = { key: { remoteJid: '0@s.whatsapp.net', fromMe: false, id:global.botname, participant: '0@s.whatsapp.net'}, message: { requestPaymentMessage: { currencyCodeIso4217: "USD", amount1000: 999999999, requestFrom: '0@s.whatsapp.net', noteMessage: { extendedTextMessage: { text: global.botname}}, expiryTimestamp: 999999999, amount: { value: 91929291929, offset: 1000, currencyCode: "USD"}}}}
-	    const ftroli ={key: {fromMe: false,"participant":"0@s.whatsapp.net", "remoteJid": "status@broadcast"}, "message": {orderMessage: {itemCount: 2022,status: 200, thumbnail: thumb, surface: 200, message: botname, orderTitle: ownername, sellerJid: '0@s.whatsapp.net'}}, contextInfo: {"forwardingScore":999,"isForwarded":false},sendEphemeral: true}
+        	const fpay = { key: { remoteJid: '0@s.whatsapp.net', fromMe: false, id:global.botname, participant: '0@s.whatsapp.net'}, message: { requestPaymentMessage: { currencyCodeIso4217: "USD", amount1000: 999999999, requestFrom: '0@s.whatsapp.net', noteMessage: { extendedTextMessage: { text: global.botname}}, expiryTimestamp: 999999999, amount: { value: 91929291929, offset: 1000, currencyCode: "USD"}}}}
+	        const ftroli ={key: {fromMe: false,"participant":"0@s.whatsapp.net", "remoteJid": "status@broadcast"}, "message": {orderMessage: {itemCount: 2022,status: 200, thumbnail: thumb, surface: 200, message: botname, orderTitle: ownername, sellerJid: '0@s.whatsapp.net'}}, contextInfo: {"forwardingScore":999,"isForwarded":false},sendEphemeral: true}
 		const fdoc = {key : {participant : '0@s.whatsapp.net', ...(m.chat ? { remoteJid: `status@broadcast` } : {}) },message: {documentMessage: {title: botname,jpegThumbnail: thumb}}}
 		const fvn = {key: {participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "status@broadcast" } : {})},message: { "audioMessage": {"mimetype":"audio/ogg; codecs=opus","seconds":359996400,"ptt": "true"}} } 
 		const fgif = {key: {participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "status@broadcast" } : {})},message: {"videoMessage": { "title":botname, "h": wm,'seconds': '359996400', 'gifPlayback': 'true', 'caption': ownername, 'jpegThumbnail': thumb}}}
@@ -345,8 +279,8 @@ module.exports = SenseiOfc = async (SenseiOfc, m, chatUpdate, store) => {
 		const fvideo = {key: { fromMe: false,participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "status@broadcast" } : {}) },message: { "videoMessage": { "title":botname, "h": wm,'seconds': '359996400', 'caption': `${pushname}`, 'jpegThumbnail': thumb}}}
 		const floc = {key : {participant : '0@s.whatsapp.net', ...(m.chat ? { remoteJid: `status@broadcast` } : {}) },message: {locationMessage: {name: wm,jpegThumbnail: thumb}}}
 		const fkontak = { key: {participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: `status@broadcast` } : {}) }, message: { 'contactMessage': { 'displayName': ownername, 'vcard': `BEGIN:VCARD\nVERSION:3.0\nN:XL;${ownername},;;;\nFN:${ownername}\nitem1.TEL;waid=916909137213:916909137213\nitem1.X-ABLabel:Mobile\nEND:VCARD`, 'jpegThumbnail': thumb, thumbnail: thumb,sendEphemeral: true}}}
-	    const fakestatus = {key: {fromMe: false,participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "status@broadcast" } : {})},message: { "imageMessage": {"url": "https://mmg.whatsapp.net/d/f/At0x7ZdIvuicfjlf9oWS6A3AR9XPh0P-hZIVPLsI70nM.enc","mimetype": "image/jpeg","caption": wm,"fileSha256": "+Ia+Dwib70Y1CWRMAP9QLJKjIJt54fKycOfB2OEZbTU=","fileLength": "28777","height": 1080,"width": 1079,"mediaKey": "vXmRR7ZUeDWjXy5iQk17TrowBzuwRya0errAFnXxbGc=","fileEncSha256": "sR9D2RS5JSifw49HeBADguI23fWDz1aZu4faWG/CyRY=","directPath": "/v/t62.7118-24/21427642_840952686474581_572788076332761430_n.enc?oh=3f57c1ba2fcab95f2c0bb475d72720ba&oe=602F3D69","mediaKeyTimestamp": "1610993486","jpegThumbnail": fs.readFileSync('./Media/theme/menu.jpg'),"scansSidecar": "1W0XhfaAcDwc7xh1R8lca6Qg/1bB4naFCSngM2LKO2NoP5RI7K+zLw=="}}}
-	    const frpayment = {
+	        const fakestatus = {key: {fromMe: false,participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: "status@broadcast" } : {})},message: { "imageMessage": {"url": "https://mmg.whatsapp.net/d/f/At0x7ZdIvuicfjlf9oWS6A3AR9XPh0P-hZIVPLsI70nM.enc","mimetype": "image/jpeg","caption": wm,"fileSha256": "+Ia+Dwib70Y1CWRMAP9QLJKjIJt54fKycOfB2OEZbTU=","fileLength": "28777","height": 1080,"width": 1079,"mediaKey": "vXmRR7ZUeDWjXy5iQk17TrowBzuwRya0errAFnXxbGc=","fileEncSha256": "sR9D2RS5JSifw49HeBADguI23fWDz1aZu4faWG/CyRY=","directPath": "/v/t62.7118-24/21427642_840952686474581_572788076332761430_n.enc?oh=3f57c1ba2fcab95f2c0bb475d72720ba&oe=602F3D69","mediaKeyTimestamp": "1610993486","jpegThumbnail": fs.readFileSync('./Media/theme/menu.jpg'),"scansSidecar": "1W0XhfaAcDwc7xh1R8lca6Qg/1bB4naFCSngM2LKO2NoP5RI7K+zLw=="}}}
+	        const frpayment = {
 	key: {
 		remoteJid: '0@s.whatsapp.net',
 		fromMe: false,
@@ -1162,7 +1096,7 @@ async function translateToSpanish(text) {
 }
         
         switch (isCommand) {
-            case 'addbadword':
+    case 'addbadword':
     case 'addbd':
         if (!TheCreator) return StickOwner()
         if (!groupAdmins) return replygc(mess.admin)
@@ -1171,7 +1105,6 @@ async function translateToSpanish(text) {
         fs.writeFileSync('./src/data/function/badword.json', JSON.stringify(bad))
         replygc('¡Palabra ofensiva añadida exitosamente!')
         break
-
     case 'delbadword':
     case 'deldb':
         if (!TheCreator) return StickOwner()
@@ -1181,7 +1114,6 @@ async function translateToSpanish(text) {
         fs.writeFileSync('./src/data/function/badword.json', JSON.stringify(bad))
         replygc('¡Palabra ofensiva eliminada exitosamente!')
         break
-
     case 'resetuser':
     case 'resetdbuser':
         if (!TheCreator) return StickOwner()
@@ -1189,14 +1121,12 @@ async function translateToSpanish(text) {
         replygc(`Se eliminaron exitosamente ${totalUsuarios} usuarios de la base de datos`)
         db.data.users = []
         break
-
     case 'resethit':
     case 'resettotalhit':
         if (!TheCreator) return StickOwner()
         global.db.data.settings[botNumber].totalhit = 0
         replygc(mess.done)
         break
-
     case 'setmenu':
         if (!TheCreator) return StickOwner()
         if (!text) return replygc(`Hay 8 menús (v1, v2, v3, v4, v5, v6, v7, v8)\nSelecciona uno\nEjemplo: ${prefix + command} v1`)
@@ -1207,7 +1137,6 @@ async function translateToSpanish(text) {
             replygc(`Hay 8 menús (v1, v2, v3, v4, v5, v6, v7, v8)\nSelecciona uno\nEjemplo: ${prefix + command} v1`)
         }
         break
-
     case 'setreply':
         if (!TheCreator) return StickOwner()
         if (!text) return replygc(`Hay 3 respuestas (v1, v2, v3)\nSelecciona una\nEjemplo: ${prefix + command} v1`)
@@ -1607,8 +1536,10 @@ case 'salir':
     if (!TheCreator) return StickOwner()
     if (!m.isGroup) return StickGroup()
     replygc('Adiós a todos 🥺')
-    await SenseiOfc.groupLeave(m.chat)
-break
+    setTimeout(async () => {
+        await SenseiOfc.groupLeave(m.chat)
+    }, 1000)
+    break
 case 'bc':
 case 'broadcast':
     if (!TheCreator) return StickOwner()
@@ -1660,19 +1591,19 @@ case 'pushcontactv2':
     replygc(`Éxito`)
 break
 case 'block': case 'ban': {
-		if (!TheCreator) return StickOwner()
-		let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
-		await SenseiOfc.updateBlockStatus(users, 'block')
-		await replygc(`Done`)
-	}
-	break
-	case 'unblock': case 'unban': case 'desbloquear': {
-		if (!TheCreator) return StickOwner()
-		let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
-		await SenseiOfc.updateBlockStatus(users, 'unblock')
-		await replygc(`Done`)
-	}
-	break
+	if (!TheCreator) return StickOwner()
+	let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
+	await SenseiOfc.updateBlockStatus(users, 'block')
+	await replygc(`Done`)
+}
+break
+case 'unblock': case 'unban': case 'desbloquear': {
+	if (!TheCreator) return StickOwner()
+	let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
+	await SenseiOfc.updateBlockStatus(users, 'unblock')
+	await replygc(`Done`)
+}
+break
 case 'bcgc':
 case 'bcgroup': {
     if (!TheCreator) return StickOwner()
@@ -2388,52 +2319,52 @@ case 'invite': case 'invitar': {
     replygc(`Se ha enviado un enlace de invitación al usuario`)
 }
 break
-            case 'closetime': case 'horacierre':
-                if (!m.isGroup) return StickGroup()
-                if (!isAdmins && !TheCreator) return StickAdmin()
-                if (!isBotAdmins) return StickBotAdmin()
-                if (args[1] == 'second') {
-                    var timer = args[0] * `1000`
-                } else if (args[1] == 'minute') {
-                    var timer = args[0] * `60000`
-                } else if (args[1] == 'hour') {
-                    var timer = args[0] * `3600000`
-                } else if (args[1] == 'day') {
-                    var timer = args[0] * `86400000`
-                } else {
-                    return replygc('*selecciona:*\nsegundo\nminuto\nhora\n\n*Ejemplo*\n10 segundo')
-                }
-                replygc(`Tiempo de cierre ${q} a partir de ahora`)
-                setTimeout(() => {
-                    var nomor = m.participant
-                    const close = `*Tiempo de cierre* grupo cerrado por el administrador\nahora solo el administrador puede enviar mensajes`
-                    SenseiOfc.groupSettingUpdate(m.chat, 'announcement')
-                    replygc(close)
-                }, timer)
-                break
-            case 'opentime': case 'horaapertura':
-                if (!m.isGroup) return StickGroup()
-                if (!isAdmins && !TheCreator) return replygc(mess.admin)
-                if (!isBotAdmins) return StickBotAdmin()
-                if (args[1] == 'second') {
-                    var timer = args[0] * `1000`
-                } else if (args[1] == 'minute') {
-                    var timer = args[0] * `60000`
-                } else if (args[1] == 'hour') {
-                    var timer = args[0] * `3600000`
-                } else if (args[1] == 'day') {
-                    var timer = args[0] * `86400000`
-                } else {
-                    return replygc('*selecciona:*\nsegundo\nminuto\nhora\n\n*Ejemplo*\n10 segundo')
-                }
-                replygc(`Tiempo de apertura ${q} a partir de ahora`)
-                setTimeout(() => {
-                    var nomor = m.participant
-                    const open = `*Tiempo de apertura* el grupo fue abierto por el administrador\n ahora los miembros pueden enviar mensajes`
-                    SenseiOfc.groupSettingUpdate(m.chat, 'not_announcement')
-                    replygc(open)
-                }, timer)
-                break
+case 'closetime': case 'horacierre':
+	if (!m.isGroup) return StickGroup()
+	if (!isAdmins && !TheCreator) return StickAdmin()
+	if (!isBotAdmins) return StickBotAdmin()
+	if (args[1] == 'second') {
+	    var timer = args[0] * `1000`
+	} else if (args[1] == 'minute') {
+	    var timer = args[0] * `60000`
+	} else if (args[1] == 'hour') {
+	    var timer = args[0] * `3600000`
+	} else if (args[1] == 'day') {
+	    var timer = args[0] * `86400000`
+	} else {
+	    return replygc('*selecciona:*\nsegundo\nminuto\nhora\n\n*Ejemplo*\n10 segundo')
+	}
+	replygc(`Tiempo de cierre ${q} a partir de ahora`)
+	setTimeout(() => {
+	    var nomor = m.participant
+	    const close = `*Tiempo de cierre* grupo cerrado por el administrador\nahora solo el administrador puede enviar mensajes`
+	    SenseiOfc.groupSettingUpdate(m.chat, 'announcement')
+	    replygc(close)
+	}, timer)
+break
+case 'opentime': case 'horaapertura':
+if (!m.isGroup) return StickGroup()
+if (!isAdmins && !TheCreator) return replygc(mess.admin)
+if (!isBotAdmins) return StickBotAdmin()
+if (args[1] == 'second') {
+    var timer = args[0] * `1000`
+} else if (args[1] == 'minute') {
+    var timer = args[0] * `60000`
+} else if (args[1] == 'hour') {
+    var timer = args[0] * `3600000`
+} else if (args[1] == 'day') {
+    var timer = args[0] * `86400000`
+} else {
+    return replygc('*selecciona:*\nsegundo\nminuto\nhora\n\n*Ejemplo*\n10 segundo')
+}
+replygc(`Tiempo de apertura ${q} a partir de ahora`)
+setTimeout(() => {
+    var nomor = m.participant
+    const open = `*Tiempo de apertura* el grupo fue abierto por el administrador\n ahora los miembros pueden enviar mensajes`
+    SenseiOfc.groupSettingUpdate(m.chat, 'not_announcement')
+    replygc(open)
+}, timer)
+break
             case 'kick': case 'eliminar':
                 if (!isAdmins && !isGroupOwner && !TheCreator) return StickAdmin()
                 if (!m.isGroup) return StickGroup()
