@@ -22,7 +22,7 @@ const fg = require('api-dylux')
 const googleTTS = require('google-tts-api')
 const jsobfus = require('javascript-obfuscator')
 const {translate} = require('@vitalets/google-translate-api')
-const scp2 = require('./lib/scraper2') 
+const scp2 = require('./lib/scraper2')
 const { exec, spawn, execSync } = require("child_process")
 const { performance } = require('perf_hooks')
 const more = String.fromCharCode(8206)
@@ -64,7 +64,7 @@ let kuismath = db.data.game.math = []
 //tiempo
 const xtime = moment.tz('America/Lima').format('HH:mm:ss')
 const xdate = moment.tz('America/Lima').format('DD/MM/YYYY')
-const time2 = moment().tz('America/Lima').format('HH:mm:ss')  
+const time2 = moment().tz('America/Lima').format('HH:mm:ss')
 if(time2 < "23:59:00"){
 var ytimewisher = `Buenas noches 🌌`
  }
@@ -82,7 +82,7 @@ var ytimewisher = `Buenos días 🌄`
  }
  if(time2 < "05:00:00"){
 var ytimewisher = `Buenos días 🌄`
- } 
+ }
 //función
 const reSize = async(buffer, ukur1, ukur2) => { return new Promise(async(resolve, reject) => { let jimp = require('jimp'); var baper = await jimp.read(buffer); var ab = await baper.resize(ukur1, ukur2).getBufferAsync(jimp.MIME_JPEG); resolve(ab); }) }
 
@@ -266,7 +266,6 @@ module.exports = SenseiOfc = async (SenseiOfc, m, chatUpdate, store) => {
 	        const frpayment = { key: { remoteJid: '0@s.whatsapp.net', fromMe: false, id: `${ownername}`, participant: '0@s.whatsapp.net' }, message: { requestPaymentMessage: { currencyCodeIso4217: "USD", amount1000: 999999999, requestFrom: '0@s.whatsapp.net', noteMessage: { extendedTextMessage: { text: `${botname}` } }, expiryTimestamp: 999999999, amount: { value: 91929291929, offset: 1000, currencyCode: "PEN" } } } }
             
             const pickRandom = (arr) => { return arr[Math.floor(Math.random() * arr.length)]; }
-
         
         //database
         try {
@@ -278,7 +277,7 @@ module.exports = SenseiOfc = async (SenseiOfc, m, chatUpdate, store) => {
                 if (!isNumber(user.afkTime)) user.afkTime = -1
                 if (!('badword' in user)) user.badword = 0
                 if (!('title' in user)) user.title = ''
-                if (!('serialNumber' in user)) user.serialNumber = randomBytes(16).toString('hex') 
+                if (!('serialNumber' in user)) user.serialNumber = randomBytes(16).toString('hex')
                 if (!('afkReason' in user)) user.afkReason = ''
                 if (!('nick' in user)) user.nick = SenseiOfc.getName(sender)
                 if (!isPremium) user.premium = false
@@ -340,7 +339,7 @@ module.exports = SenseiOfc = async (SenseiOfc, m, chatUpdate, store) => {
                if (!('totalhit' in setting)) setting.totalhit = 0
                if (!('totalError' in setting)) setting.totalError = 0
                if (!('online' in setting)) setting.online = false 
-               if (!('autosticker' in setting)) setting.autosticker = false 
+               if (!('autosticker' in setting)) setting.autosticker = false
                if (!('autobio' in setting)) setting.autobio = false 
                if (!('autoread' in setting)) setting.autoread = false
                if (!('autorecordtype' in setting)) setting.autorecordtype = false
@@ -369,16 +368,16 @@ module.exports = SenseiOfc = async (SenseiOfc, m, chatUpdate, store) => {
                autorecord: false,
                autotype: false,
                watermark: {
-                  packname: global.packname, 
+                  packname: global.packname,
                   author: global.author
                },
                about: {
                   bot: {
-                     nick: SenseiOfc.getName(botNumber), 
+                     nick: SenseiOfc.getName(botNumber),
                      alias: botname
                   },
                   owner: {
-                     nick: SenseiOfc.getName(global.ownernumber + '@s.whatsapp.net'), 
+                     nick: SenseiOfc.getName(global.ownernumber + '@s.whatsapp.net'),
                      alias: global.ownernumber
                   }
                }
@@ -390,11 +389,7 @@ module.exports = SenseiOfc = async (SenseiOfc, m, chatUpdate, store) => {
         
         async function ephoto(url, texk) {
 let form = new FormData 
-let gT = await axios.get(url, {
-  headers: {
-    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
-  }
-})
+let gT = await axios.get(url, { headers: { "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36" } })
 let $ = cheerio.load(gT.data)
 let text = texk
 let token = $("input[name=token]").val()
@@ -404,10 +399,7 @@ form.append("text[]", text)
 form.append("token", token)
 form.append("build_server", build_server)
 form.append("build_server_id", build_server_id)
-let res = await axios({
-  url: url,
-  method: "POST",
-  data: form,
+let res = await axios.post(url, form, {
   headers: {
     Accept: "*/*",
     "Accept-Language": "en-US,en;q=0.9",
@@ -506,7 +498,7 @@ async function styletext(teks) {
     resolve(xeonyresult)
     })
 }
-        
+
         // Función de límite
 async function useLimit(sender, amount) {
     db.data.users[sender].limit -= amount
@@ -556,67 +548,26 @@ if (db.data.settings[botNumber].autobio) {
     SenseiOfc.updateProfileStatus(`${botname} ha estado funcionando durante ${runtime(process.uptime())}`).catch(_ => _)
 }
      //auto type record
-        if (db.data.settings[botNumber].autorecordtype){
-        if (isCommand) {
-            let xeonmix = ['composing', 'recording']
-            xeonmix2 = xeonmix[Math.floor(xeonmix.length * Math.random())]
-            SenseiOfc.sendPresenceUpdate(xeonmix2, from)
-        }
-        }
-        if (db.data.settings[botNumber].autorecord){
-        if (isCommand) {
-        	let xeonmix = ['recording']
-            xeonmix2 = xeonmix[Math.floor(xeonmix.length * Math.random())]
-            SenseiOfc.sendPresenceUpdate(xeonmix2, from)
-        }
-        }
-        if (db.data.settings[botNumber].autotype){
-        if (isCommand) {
-        	let xeonpos = ['composing']
-            SenseiOfc.sendPresenceUpdate(xeonpos, from)
-        }
-        }
+	if (db.data.settings[botNumber].autorecordtype){ if (isCommand) { let xeonmix = ['composing', 'recording']; xeonmix2 = xeonmix[Math.floor(xeonmix.length * Math.random())]; SenseiOfc.sendPresenceUpdate(xeonmix2, from); } }
+	if (db.data.settings[botNumber].autorecord){ if (isCommand) { let xeonmix = ['recording']; xeonmix2 = xeonmix[Math.floor(xeonmix.length * Math.random())]; SenseiOfc.sendPresenceUpdate(xeonmix2, from); } }
+	if (db.data.settings[botNumber].autotype){ if (isCommand) { let xeonpos = ['composing']; SenseiOfc.sendPresenceUpdate(xeonpos, from); } }
+
         
         //auto block number
-        if (m.sender.startsWith(`${autoblocknumber}`) && db.data.settings[botNumber].autoblocknum === true) {
-            return SenseiOfc.updateBlockStatus(m.sender, 'block')
-        }
-        if (!m.sender.startsWith('91') && db.data.settings[botNumber].onlyindia === true) {
-            return SenseiOfc.updateBlockStatus(m.sender, 'block')
-        }
-        if (!m.sender.startsWith('62') && db.data.settings[botNumber].onlyindo === true) {
-            return SenseiOfc.updateBlockStatus(m.sender, 'block')
-        } 
-        if (!m.sender.startsWith(`${antiforeignnumber}`) && db.data.chats[m.chat].antiforeignnum === true){ 
-        	if (TheCreator || isAdmins || !isBotAdmins) return
-            SenseiOfc.sendMessage(m.chat, { text: `¡Lo siento amigo! Serás eliminado porque el administrador/propietario del grupo ha habilitado el anti número extranjero, solo el código de país +${antiforeignnumber} puede unirse al grupo` }, {quoted: m})
-            await sleep(2000)
-            await SenseiOfc.groupParticipantsUpdate(m.chat, [m.sender], 'remove')
-        }
+        if (m.sender.startsWith(`${autoblocknumber}`) && db.data.settings[botNumber].autoblocknum === true) { return SenseiOfc.updateBlockStatus(m.sender, 'block') }
+        if (!m.sender.startsWith('91') && db.data.settings[botNumber].onlyindia === true) { return SenseiOfc.updateBlockStatus(m.sender, 'block') }
+        if (!m.sender.startsWith('62') && db.data.settings[botNumber].onlyindo === true) { return SenseiOfc.updateBlockStatus(m.sender, 'block') }
+        if (!m.sender.startsWith(`${antiforeignnumber}`) && db.data.chats[m.chat].antiforeignnum === true){ if (TheCreator || isAdmins || !isBotAdmins) return SenseiOfc.sendMessage(m.chat, { text: `¡Lo siento amigo! Serás eliminado porque el administrador/propietario del grupo ha habilitado el anti número extranjero, solo el código de país +${antiforeignnumber} puede unirse al grupo` }, {quoted: m}); await sleep(2000); await SenseiOfc.groupParticipantsUpdate(m.chat, [m.sender], 'remove'); }
+
         let list = []
-for (let i of owner) {
-list.push({
-	    	displayName: await SenseiOfc.getName(i),
-	    	vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await SenseiOfc.getName(i)}\nFN:${await SenseiOfc.getName(i)}\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Click here to chat\nitem2.EMAIL;type=INTERNET:${ytname}\nitem2.X-ABLabel:YouTube\nitem3.URL:${socialm}\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;${location};;;;\nitem4.X-ABLabel:Region\nEND:VCARD`
-	    })
-	}
+	for (let i of owner) { list.push({ displayName: await SenseiOfc.getName(i), vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await SenseiOfc.getName(i)}\nFN:${await SenseiOfc.getName(i)}\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Click here to chat\nitem2.EMAIL;type=INTERNET:${ytname}\nitem2.X-ABLabel:YouTube\nitem3.URL:${socialm}\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;${location};;;;\nitem4.X-ABLabel:Region\nEND:VCARD` }) }
+
         //console log
-        if (isCommand) {
-    let fecha = moment().format('LLLL')
-    console.log(color(`\n< ================================================== >\n`, 'cyan'))
-    console.log(chalk.black(chalk.bgWhite(!isCommand ? '[ MENSAJE ]' : '[ COMANDO ]')), chalk.black(chalk.bgGreen(fecha)), chalk.black(chalk.bgBlue(budy || m.mtype)) + '\n' + chalk.magenta('=> De'), chalk.green(pushname), chalk.yellow(m.sender) + '\n' + chalk.blueBright('=> En'), chalk.green(m.isGroup ? pushname : 'Chat privado', m.chat))
-    global.db.data.settings[botNumber].totalhit += 1
-}
-        
+        if (isCommand) { let fecha = moment().format('LLLL'); console.log(color(`\n< ================================================== >\n`, 'cyan')); console.log(chalk.black(chalk.bgWhite(!isCommand ? '[ MENSAJE ]' : '[ COMANDO ]')), chalk.black(chalk.bgGreen(fecha)), chalk.black(chalk.bgBlue(budy || m.mtype)) + '\n' + chalk.magenta('=> De'), chalk.green(pushname), chalk.yellow(m.sender) + '\n' + chalk.blueBright('=> En'), chalk.green(m.isGroup ? pushname : 'Chat privado', m.chat)); global.db.data.settings[botNumber].totalhit += 1; }
+
         //antiviewonce
-    if ( db.data.chats[m.chat].antiviewonce && m.isGroup && m.mtype == 'viewOnceMessageV2') {
-    	if (m.isBaileys && m.fromMe) return
-        let val = { ...m }
-        let msg = val.message?.viewOnceMessage?.message || val.message?.viewOnceMessageV2?.message
-        delete msg[Object.keys(msg)[0]].viewOnce
-        val.message = msg
-        await SenseiOfc.sendMessage(m.chat, { forward: val }, { quoted: m })
-    }
+	if ( db.data.chats[m.chat].antiviewonce && m.isGroup && m.mtype == 'viewOnceMessageV2') { if (m.isBaileys && m.fromMe) return; let val = { ...m }; let msg = val.message?.viewOnceMessage?.message || val.message?.viewOnceMessageV2?.message; delete msg[Object.keys(msg)[0]].viewOnce; val.message = msg; await SenseiOfc.sendMessage(m.chat, { forward: val }, { quoted: m }); }
+
         //ANTI VIRUS
 if (isGroup && db.data.chats[m.chat].antivirtex) {
 if (budy.includes('๒๒๒๒') || budy.includes('ดุ') || budy.includes('ผิดุท้เึางืผิดุท้เึางื') || budy.includes('๑๑๑๑๑๑๑๑') || budy.includes('৭৭৭৭৭৭৭৭') || budy.includes('   ⃢   ⃢   ⃢  ') || budy.includes('*⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃟⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢⃟⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢⃟⃟ᡃ⃟ᡃ⃟ᡃ⃢ᡃ⃢ᡃ⃢⃟⃢⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃟⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢⃟⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢⃟⃟ᡃ⃟ᡃ⃟ᡃ⃢ᡃ⃢ᡃ⃢⃟⃢⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃢ᡃ⃟⃟⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢⃟⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢ᡃ⃢⃟⃟ᡃ⃟ᡃ⃟ᡃ⃢ᡃ⃢ᡃ⃢⃟⃢⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟ᡃ⃟') || budy.includes('ผดิทุเ้ึางผืดิทุเ้') || budy.includes('.*࡞ࣰࣰࣰࣲࣲࣲࣲࣩࣩࣩࣩࣶࣶ࣯࣯࣮࣮ࣦ࣯ࣨࣨࣨࣻࣻࣻࣼࣼࣼࣽࣽࣾࣷࣵࣴ࣬࣬࣬ࣤࣤࣧࣧ*') || budy.includes('᥋') || budy.includes('؁') || budy.includes('ٯٯٯٯٯ') ) {
@@ -631,16 +582,8 @@ SenseiOfc.sendMessage(`${ownernumber}@s.whatsapp.net`,{text: `Hi Owner! wa.me/${
  }
  }
  
- if (db.data.chats[m.chat].antibot) {
-    if (m.isBaileys && m.fromMe == false){
-        if (isAdmin || !isBotAdmin){		  
-        } else {
-          replygc(`*Otro Bot Detectado*\n\n¡Hushhh, aléjate de este grupo!`)
-    return await SenseiOfc.groupParticipantsUpdate(m.chat, [m.sender], 'remove')
-        }
-    }
-   }
- 
+if (db.data.chats[m.chat].antibot) { if (m.isBaileys && m.fromMe == false){ if (isAdmin || !isBotAdmin){} else { replygc(`*Otro Bot Detectado*\n\n¡Hushhh, aléjate de este grupo!`) return await SenseiOfc.groupParticipantsUpdate(m.chat, [m.sender], 'remove') } } }
+
         //anti media
         if (db.data.chats[m.chat].antimedia && isMedia) {
         if (TheCreator || isAdmins || !isBotAdmins){		  
@@ -740,18 +683,7 @@ SenseiOfc.sendMessage(`${ownernumber}@s.whatsapp.net`,{text: `Hi Owner! wa.me/${
     }
 }
         //autosticker
-        if (db.data.settings[botNumber].autosticker) {
-        	if (m.key.fromMe) return
-            if (/image/.test(mime) && !/webp/.test(mime)) {
-                let mediac = await quoted.download()
-                SenseiOfc.sendImageAsSticker(from, mediac, m, { packname: global.packname, author: global.author })
-                console.log(`Auto sticker detected`)
-            } else if (/video/.test(mime)) {
-                if ((quoted.msg || quoted).seconds > 11) return
-                let mediac = await quoted.download()
-                SenseiOfc.sendVideoAsSticker(from, mediac, m, { packname: global.packname, author: global.author })
-            }
-        }
+        if (db.data.settings[botNumber].autosticker) { if (m.key.fromMe) return; if (/image/.test(mime) && !/webp/.test(mime)) { let mediac = await quoted.download(); SenseiOfc.sendImageAsSticker(from, mediac, m, { packname: global.packname, author: global.author }); console.log(`Auto sticker detected`); } else if (/video/.test(mime)) { if ((quoted.msg || quoted).seconds > 11) return; let mediac = await quoted.download(); SenseiOfc.sendVideoAsSticker(from, mediac, m, { packname: global.packname, author: global.author }); } }
         
         if (db.data.chats[m.chat].antilinkgc) {
     if (budy.match(`chat.whatsapp.com`)) {
@@ -807,87 +739,21 @@ if (db.data.users[m.sender].afkTime > -1) {
 }
 
         
-//total features
-const xeonfeature = () =>{
-            var mytext = fs.readFileSync("./XeonCheems10.js").toString()
-            var numUpper = (mytext.match(/case '/g) || []).length
-            return numUpper
-        }
+	//total features
+	const xeonfeature = () => (mytext => (mytext.match(/case '/g) || []).length)(fs.readFileSync("./XeonCheems10.js").toString())
         //autoreply
-for (let BhosdikaXeon of VoiceNote) {
-if (budy === BhosdikaXeon) {
-let audiobuffy = fs.readFileSync(`./Media/audio/${BhosdikaXeon}.mp3`)
-SenseiOfc.sendMessage(m.chat, { audio: audiobuffy, mimetype: 'audio/mp4', ptt: true }, { quoted: m })     
-}
-}
-for (let BhosdikaXeon of Sticker){
-if (budy === BhosdikaXeon){
-let stickerbuffy = fs.readFileSync(`./Media/sticker/${BhosdikaXeon}.webp`)
-SenseiOfc.sendMessage(m.chat, { sticker: stickerbuffy }, { quoted: m })
-}
-}
-for (let BhosdikaXeon of Image){
-if (budy === BhosdikaXeon){
-let imagebuffy = fs.readFileSync(`./Media/image/${BhosdikaXeon}.jpg`)
-SenseiOfc.sendMessage(m.chat, { image: imagebuffy }, { quoted: m })
-}
-}
-for (let BhosdikaXeon of Video){
-if (budy === BhosdikaXeon){
-let videobuffy = fs.readFileSync(`./Media/video/${BhosdikaXeon}.mp4`)
-SenseiOfc.sendMessage(m.chat, { video: videobuffy }, { quoted: m })
-}
-}
+	for (let BhosdikaXeon of VoiceNote) { if (budy === BhosdikaXeon) { let audiobuffy = fs.readFileSync(`./Media/audio/${BhosdikaXeon}.mp3`); SenseiOfc.sendMessage(m.chat, { audio: audiobuffy, mimetype: 'audio/mp4', ptt: true }, { quoted: m }); } }
+	for (let BhosdikaXeon of Sticker){ if (budy === BhosdikaXeon){ let stickerbuffy = fs.readFileSync(`./Media/sticker/${BhosdikaXeon}.webp`); SenseiOfc.sendMessage(m.chat, { sticker: stickerbuffy }, { quoted: m }); } }
+	for (let BhosdikaXeon of Image){ if (budy === BhosdikaXeon){ let imagebuffy = fs.readFileSync(`./Media/image/${BhosdikaXeon}.jpg`); SenseiOfc.sendMessage(m.chat, { image: imagebuffy }, { quoted: m }); } }
+	for (let BhosdikaXeon of Video){ if (budy === BhosdikaXeon){ let videobuffy = fs.readFileSync(`./Media/video/${BhosdikaXeon}.mp4`); SenseiOfc.sendMessage(m.chat, { video: videobuffy }, { quoted: m }); } }
+	const sendapk = (teks) => { SenseiOfc.sendMessage(from, { document: teks, mimetype: 'application/vnd.android.package-archive'}, {quoted:m}) }
+	for (let BhosdikaXeon of Apk) { if (budy === BhosdikaXeon) { let buffer = fs.readFileSync(`./Media/apk/${BhosdikaXeon}.apk`); sendapk(buffer); } }
+	for (let BhosdikaXeon of Zip) { if (budy === BhosdikaXeon) { let buffer = fs.readFileSync(`./Media/zip/${BhosdikaXeon}.zip`); sendzip(buffer); } }
+	for (let BhosdikaXeon of Doc) { if (budy === BhosdikaXeon) { let buffer = fs.readFileSync(`./Media/doc/${BhosdikaXeon}.pdf`); senddocu(buffer); } }
+	for (let BhosdikaXeon of Doc) { if (budy === BhosdikaXeon) { let buffer = fs.readFileSync(`./Media/doc/${BhosdikaXeon}.pdf`); senddocu(buffer); } }
 
-const sendapk = (teks) => {
-SenseiOfc.sendMessage(from, { document: teks, mimetype: 'application/vnd.android.package-archive'}, {quoted:m})
-}
-for (let BhosdikaXeon of Apk) {
-if (budy === BhosdikaXeon) {
-let buffer = fs.readFileSync(`./Media/apk/${BhosdikaXeon}.apk`)
-sendapk(buffer)
-}
-}
-
-const sendzip = (teks) => {
-SenseiOfc.sendMessage(from, { document: teks, mimetype: 'application/zip'}, {quoted:m})
-}
-for (let BhosdikaXeon of Zip) {
-if (budy === BhosdikaXeon) {
-let buffer = fs.readFileSync(`./Media/zip/${BhosdikaXeon}.zip`)
-sendzip(buffer)
-}
-}
-
-const senddocu = (teks) => {
-SenseiOfc.sendMessage(from, { document: teks, mimetype: 'application/pdf'}, {quoted:m})
-}
-for (let BhosdikaXeon of Doc) {
-if (budy === BhosdikaXeon) {
-let buffer = fs.readFileSync(`./Media/doc/${BhosdikaXeon}.pdf`)
-senddocu(buffer)
-}
-}
-
-// Respon Cmd with media
-if (isMedia && m.msg.fileSha256 && (m.msg.fileSha256.toString('base64') in global.db.data.sticker)) {
-let hash = global.db.data.sticker[m.msg.fileSha256.toString('base64')]
-let { text, mentionedJid } = hash
-let messages = await generateWAMessage(m.chat, { text: text, mentions: mentionedJid }, {
-    userJid: SenseiOfc.user.id,
-    quoted: m.quoted && m.quoted.fakeObj
-})
-messages.key.fromMe = areJidsSameUser(m.sender, SenseiOfc.user.id)
-messages.key.id = m.key.id
-messages.pushName = m.pushName
-if (m.isGroup) messages.participant = m.sender
-let msg = {
-    ...chatUpdate,
-    messages: [proto.WebMessageInfo.fromObject(messages)],
-    type: 'append'
-}
-SenseiOfc.ev.emit('messages.upsert', msg)
-}
+	// Respon Cmd with media
+	if (isMedia && m.msg.fileSha256 && (m.msg.fileSha256.toString('base64') in global.db.data.sticker)) { let hash = global.db.data.sticker[m.msg.fileSha256.toString('base64')]; let { text, mentionedJid } = hash; let messages = await generateWAMessage(m.chat, { text: text, mentions: mentionedJid }, { userJid: SenseiOfc.user.id, quoted: m.quoted && m.quoted.fakeObj }); messages.key.fromMe = areJidsSameUser(m.sender, SenseiOfc.user.id); messages.key.id = m.key.id; messages.pushName = m.pushName; if (m.isGroup) messages.participant = m.sender; let msg = { ...chatUpdate, messages: [proto.WebMessageInfo.fromObject(messages)], type: 'append' }; SenseiOfc.ev.emit('messages.upsert', msg); }
 
 //matemáticas
 if (kuismath.hasOwnProperty(m.sender.split('@')[0]) && isCmd2) {
@@ -1043,15 +909,10 @@ Hacer clic en https://wa.me/${botNumber.split`@`[0]}`, m, { mentions: [roof.p, r
  //end
         
         //user db
-        if (isCommand && !isUser) {
-verifieduser.push(sender)
-fs.writeFileSync('./src/data/role/user.json', JSON.stringify(verifieduser, null, 2))
-}
-async function translateToSpanish(text) {
-    const response = await axios.get(`https://api.popcat.xyz/translate?to=es&text=${encodeURIComponent(text)}`)
-    return response.data.translated;
-}
-        
+        if (isCommand && !isUser) { verifieduser.push(sender); fs.writeFileSync('./src/data/role/user.json', JSON.stringify(verifieduser, null, 2)); }
+
+async function translateToSpanish(text) { const response = await axios.get(`https://api.popcat.xyz/translate?to=es&text=${encodeURIComponent(text)}`) return response.data.translated; }
+
         switch (isCommand) {
     case 'addbadword':
     case 'addbd':
@@ -9013,7 +8874,7 @@ let form = new URLSearchParams()
 form.append("jazoest", $form.find("input[name=jazoest]").val())
 form.append("lsd", $form.find("input[name=lsd]").val())
 form.append("step", "submit")
-form.append("country_selector", "INDIA")
+form.append("country_selector", "PERÚ")
 form.append("phone_number", xeonnumx)
 form.append("email", email.data[0])
 form.append("email_confirm", email.data[0])
@@ -9057,7 +8918,7 @@ let form = new URLSearchParams()
 form.append("jazoest", $form.find("input[name=jazoest]").val())
 form.append("lsd", $form.find("input[name=lsd]").val())
 form.append("step", "submit")
-form.append("country_selector", "INDIA")
+form.append("country_selector", "PERÚ")
 form.append("phone_number", xeonnumx)
 form.append("email", email.data[0])
 form.append("email_confirm", email.data[0])
@@ -9101,7 +8962,7 @@ let form = new URLSearchParams()
 form.append("jazoest", $form.find("input[name=jazoest]").val())
 form.append("lsd", $form.find("input[name=lsd]").val())
 form.append("step", "submit")
-form.append("country_selector", "INDIA")
+form.append("country_selector", "PERÚ")
 form.append("phone_number", xeonnumx)
 form.append("email", email.data[0])
 form.append("email_confirm", email.data[0])
@@ -9145,7 +9006,7 @@ let form = new URLSearchParams()
 form.append("jazoest", $form.find("input[name=jazoest]").val())
 form.append("lsd", $form.find("input[name=lsd]").val())
 form.append("step", "submit")
-form.append("country_selector", "INDIA")
+form.append("country_selector", "PERÚ")
 form.append("phone_number", xeonnumx)
 form.append("email", email.data[0])
 form.append("email_confirm", email.data[0])
@@ -9189,7 +9050,7 @@ let form = new URLSearchParams()
 form.append("jazoest", $form.find("input[name=jazoest]").val())
 form.append("lsd", $form.find("input[name=lsd]").val())
 form.append("step", "submit")
-form.append("country_selector", "INDIA")
+form.append("country_selector", "PERÚ")
 form.append("phone_number", xeonnumx)
 form.append("email", email.data[0])
 form.append("email_confirm", email.data[0])
@@ -9233,7 +9094,7 @@ let form = new URLSearchParams()
 form.append("jazoest", $form.find("input[name=jazoest]").val())
 form.append("lsd", $form.find("input[name=lsd]").val())
 form.append("step", "submit")
-form.append("country_selector", "INDIA")
+form.append("country_selector", "PERÚ")
 form.append("phone_number", xeonnumx)
 form.append("email", email.data[0])
 form.append("email_confirm", email.data[0])
@@ -9277,7 +9138,7 @@ let form = new URLSearchParams()
 form.append("jazoest", $form.find("input[name=jazoest]").val())
 form.append("lsd", $form.find("input[name=lsd]").val())
 form.append("step", "submit")
-form.append("country_selector", "INDIA")
+form.append("country_selector", "PERÚ")
 form.append("phone_number", xeonnumx)
 form.append("email", email.data[0])
 form.append("email_confirm", email.data[0])
@@ -9321,7 +9182,7 @@ let form = new URLSearchParams()
 form.append("jazoest", $form.find("input[name=jazoest]").val())
 form.append("lsd", $form.find("input[name=lsd]").val())
 form.append("step", "submit")
-form.append("country_selector", "INDIA")
+form.append("country_selector", "PERÚ")
 form.append("phone_number", xeonnumx)
 form.append("email", email.data[0])
 form.append("email_confirm", email.data[0])
@@ -9365,7 +9226,7 @@ let form = new URLSearchParams()
 form.append("jazoest", $form.find("input[name=jazoest]").val())
 form.append("lsd", $form.find("input[name=lsd]").val())
 form.append("step", "submit")
-form.append("country_selector", "INDIA")
+form.append("country_selector", "PERÚ")
 form.append("phone_number", xeonnumx)
 form.append("email", email.data[0])
 form.append("email_confirm", email.data[0])
@@ -9409,7 +9270,7 @@ let form = new URLSearchParams()
 form.append("jazoest", $form.find("input[name=jazoest]").val())
 form.append("lsd", $form.find("input[name=lsd]").val())
 form.append("step", "submit")
-form.append("country_selector", "INDIA")
+form.append("country_selector", "PERÚ")
 form.append("phone_number", xeonnumx)
 form.append("email", email.data[0])
 form.append("email_confirm", email.data[0])
@@ -9453,7 +9314,7 @@ let form = new URLSearchParams()
 form.append("jazoest", $form.find("input[name=jazoest]").val())
 form.append("lsd", $form.find("input[name=lsd]").val())
 form.append("step", "submit")
-form.append("country_selector", "INDIA")
+form.append("country_selector", "PERÚ")
 form.append("phone_number", xeonnumx)
 form.append("email", email.data[0])
 form.append("email_confirm", email.data[0])
