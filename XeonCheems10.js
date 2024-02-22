@@ -65,24 +65,12 @@ let kuismath = db.data.game.math = []
 const xtime = moment.tz('America/Lima').format('HH:mm:ss')
 const xdate = moment.tz('America/Lima').format('DD/MM/YYYY')
 const time2 = moment().tz('America/Lima').format('HH:mm:ss')
-if(time2 < "23:59:00"){
-var ytimewisher = `Buenas noches 🌌`
- }
- if(time2 < "19:00:00"){
-var ytimewisher = `Buenas tardes 🌃`
- }
- if(time2 < "18:00:00"){
-var ytimewisher = `Buenas tardes 🌃`
- }
- if(time2 < "15:00:00"){
-var ytimewisher = `Buenas tardes 🌅`
- }
- if(time2 < "11:00:00"){
-var ytimewisher = `Buenos días 🌄`
- }
- if(time2 < "05:00:00"){
-var ytimewisher = `Buenos días 🌄`
- }
+if(time2 < "23:59:00"){ var ytimewisher = `Buenas noches 🌌` }
+if(time2 < "19:00:00"){ var ytimewisher = `Buenas tardes 🌃` }
+if(time2 < "18:00:00"){ var ytimewisher = `Buenas tardes 🌃` }
+if(time2 < "15:00:00"){ var ytimewisher = `Buenas tardes 🌅` }
+if(time2 < "11:00:00"){ var ytimewisher = `Buenos días 🌄` }
+if(time2 < "05:00:00"){ var ytimewisher = `Buenos días 🌄` }
 //función
 const reSize = async(buffer, ukur1, ukur2) => { return new Promise(async(resolve, reject) => { let jimp = require('jimp'); var baper = await jimp.read(buffer); var ab = await baper.resize(ukur1, ukur2).getBufferAsync(jimp.MIME_JPEG); resolve(ab); }) }
 
@@ -154,30 +142,12 @@ module.exports = SenseiOfc = async (SenseiOfc, m, chatUpdate, store) => {
         expiredPremiumCheck(SenseiOfc, m, premium)
         
         //theme sticker reply
-        const StickWait = () => {
-        let StikRep = fs.readFileSync('./Media/theme/sticker_reply/wait.webp')
-        SenseiOfc.sendMessage(from, { sticker: StikRep }, { quoted: m })
-        }
-        const StickAdmin = () => {
-        let StikRep = fs.readFileSync('./Media/theme/sticker_reply/admin.webp')
-        SenseiOfc.sendMessage(from, { sticker: StikRep }, { quoted: m })
-        }
-        const StickBotAdmin = () => {
-        let StikRep = fs.readFileSync('./Media/theme/sticker_reply/botadmin.webp')
-        SenseiOfc.sendMessage(from, { sticker: StikRep }, { quoted: m })
-        }
-        const StickOwner = () => {
-        let StikRep = fs.readFileSync('./Media/theme/sticker_reply/owner.webp')
-        SenseiOfc.sendMessage(from, { sticker: StikRep }, { quoted: m })
-        }
-        const StickGroup = () => {
-        let StikRep = fs.readFileSync('./Media/theme/sticker_reply/group.webp')
-        SenseiOfc.sendMessage(from, { sticker: StikRep }, { quoted: m })
-        }
-        const StickPrivate = () => {
-        let StikRep = fs.readFileSync('./Media/theme/sticker_reply/private.webp')
-        SenseiOfc.sendMessage(from, { sticker: StikRep }, { quoted: m })
-        }
+        const StickWait = () => { let StikRep = fs.readFileSync('./Media/theme/sticker_reply/wait.webp'); SenseiOfc.sendMessage(from, { sticker: StikRep }, { quoted: m }); }
+        const StickAdmin = () => { let StikRep = fs.readFileSync('./Media/theme/sticker_reply/admin.webp'); SenseiOfc.sendMessage(from, { sticker: StikRep }, { quoted: m }); }
+        const StickBotAdmin = () => { let StikRep = fs.readFileSync('./Media/theme/sticker_reply/botadmin.webp'); SenseiOfc.sendMessage(from, { sticker: StikRep }, { quoted: m }); }
+        const StickOwner = () => { let StikRep = fs.readFileSync('./Media/theme/sticker_reply/owner.webp'); SenseiOfc.sendMessage(from, { sticker: StikRep }, { quoted: m }); }
+        const StickGroup = () => { let StikRep = fs.readFileSync('./Media/theme/sticker_reply/group.webp'); SenseiOfc.sendMessage(from, { sticker: StikRep }, { quoted: m }); }
+        const StickPrivate = () => { let StikRep = fs.readFileSync('./Media/theme/sticker_reply/private.webp'); SenseiOfc.sendMessage(from, { sticker: StikRep }, { quoted: m }); }
         //premium
         async function replyprem(teks) {
     	replygc(`Esta función es para usuarios premium, comuníquese con el propietario para convertirse en usuario premium`)
