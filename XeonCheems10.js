@@ -470,53 +470,21 @@ async function styletext(teks) {
 }
 
         // Función de límite
-async function useLimit(sender, amount) {
-    db.data.users[sender].limit -= amount
-    db.data.users[sender].totalLimit += amount
-    replygc(`Has utilizado: ${amount} límite\nRestante: ${db.data.users[sender].limit} límite`)
-}
-
-async function resetLimit() {
-    let users = Object.keys(global.db.data.users)
-    let Limitxeon = isPremium ? limit.prem : limit.free
-    for (let i of users) {
-        db.data.users[i].limit = Limitxeon
-    }
-    SenseiOfc.sendText('120363167338947238@g.us', { text: `Restablecer límite` })
-}
+async function useLimit(sender, amount) { db.data.users[sender].limit -= amount; db.data.users[sender].totalLimit += amount; replygc(`Has utilizado: ${amount} límite\nRestante: ${db.data.users[sender].limit} límite`) }
+async function resetLimit() { let users = Object.keys(global.db.data.users); let Limitxeon = isPremium ? limit.prem : limit.free; for (let i of users) { db.data.users[i].limit = Limitxeon } SenseiOfc.sendText('120363167338947238@g.us', { text: `Restablecer límite` }) }
 
 // Solo para grupos
-if (!m.isGroup && !TheCreator && db.data.settings[botNumber].onlygrub) {
-    if (isCommand) {
-        return replygc(`¡Hola amigo! Como queremos reducir el spam, ¡utiliza el bot en el chat grupal!\n\nSi tienes problemas, chatea con el propietario en wa.me/${ownernumber}`)
-    }
-}
+if (!m.isGroup && !TheCreator && db.data.settings[botNumber].onlygrub) { if (isCommand) { return replygc(`¡Hola amigo! Como queremos reducir el spam, ¡utiliza el bot en el chat grupal!\n\nSi tienes problemas, chatea con el propietario en wa.me/${ownernumber}`) } }
 
 // Solo privado
-if (!TheCreator && db.data.settings[botNumber].onlypc && m.isGroup) {
-    if (isCommand) {
-        return replygc("¡Hola amigo! Si quieres usar este bot, chatea con el bot en un chat privado.")
-    }
-}
-
-if (!SenseiOfc.public) {
-    if (TheCreator && !m.key.fromMe) return
-}
-
-if (db.data.settings[botNumber].online) {
-    if (isCommand) {
-        SenseiOfc.sendPresenceUpdate('no disponible', from)
-    }
-}
-
-if (db.data.settings[botNumber].autoread) {
-    SenseiOfc.readMessages([m.key])
-}
+if (!TheCreator && db.data.settings[botNumber].onlypc && m.isGroup) { if (isCommand) { return replygc("¡Hola amigo! Si quieres usar este bot, chatea con el bot en un chat privado.") } }
+if (!SenseiOfc.public) { if (TheCreator && !m.key.fromMe) return }
+if (db.data.settings[botNumber].online) { if (isCommand) { SenseiOfc.sendPresenceUpdate('no disponible', from) } }
+if (db.data.settings[botNumber].autoread) { SenseiOfc.readMessages([m.key]) }
 
 // Autoestablecer biografía
-if (db.data.settings[botNumber].autobio) {
-    SenseiOfc.updateProfileStatus(`${botname} ha estado funcionando durante ${runtime(process.uptime())}`).catch(_ => _)
-}
+if (db.data.settings[botNumber].autobio) { SenseiOfc.updateProfileStatus(`${botname} ha estado funcionando durante ${runtime(process.uptime())}`).catch(_ => _) }
+
      //auto type record
 	if (db.data.settings[botNumber].autorecordtype){ if (isCommand) { let xeonmix = ['composing', 'recording']; xeonmix2 = xeonmix[Math.floor(xeonmix.length * Math.random())]; SenseiOfc.sendPresenceUpdate(xeonmix2, from); } }
 	if (db.data.settings[botNumber].autorecord){ if (isCommand) { let xeonmix = ['recording']; xeonmix2 = xeonmix[Math.floor(xeonmix.length * Math.random())]; SenseiOfc.sendPresenceUpdate(xeonmix2, from); } }
@@ -555,85 +523,15 @@ SenseiOfc.sendMessage(`${ownernumber}@s.whatsapp.net`,{text: `Hi Owner! wa.me/${
 if (db.data.chats[m.chat].antibot) { if (m.isBaileys && m.fromMe == false){ if (isAdmin || !isBotAdmin){} else { replygc(`*Otro Bot Detectado*\n\n¡Hushhh, aléjate de este grupo!`) return await SenseiOfc.groupParticipantsUpdate(m.chat, [m.sender], 'remove') } } }
 
         //anti media
-        if (db.data.chats[m.chat].antimedia && isMedia) {
-        if (TheCreator || isAdmins || !isBotAdmins){		  
-        } else {
-          replygc(`\`\`\`「 Media Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-media para este grupo`)
-    return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant }})
-        }
-  }
-        if (db.data.chats[m.chat].image && isErikMedia) {
-    if(isErikMedia === "imageMessage"){
-        if (TheCreator || isAdmins || !isBotAdmins){		  
-        } else {
-          replygc(`\`\`\`「 Image Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-imagen para este grupo`)
-    return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant }})
-        }
-    }
-  }
-        if (db.data.chats[m.chat].antivideo && isErikMedia) {
-    if(isErikMedia === "videoMessage"){
-        if (TheCreator || isAdmins || !isBotAdmins){		  
-        } else {
-          replygc(`\`\`\`「 Video Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-video para este grupo`)
-    return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant }})
-        }
-    }
-  }
-        if (db.data.chats[m.chat].antisticker && isErikMedia) {
-    if(isErikMedia === "stickerMessage"){
-        if (TheCreator || isAdmins || !isBotAdmins){		  
-        } else {
-          replygc(`\`\`\`「 Sticker Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-sticker para este grupo`)
-    return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant }})
-        }
-    }
-  }
-        if (db.data.chats[m.chat].antiaudio && isErikMedia) {
-    if(isErikMedia === "audioMessage"){
-        if (TheCreator || isAdmins || !isBotAdmins){		  
-        } else {
-          replygc(`\`\`\`「 Audio Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-audio para este grupo`)
-    return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant }})
-        }
-    }
-  }
-       if (db.data.chats[m.chat].antipoll && isErikMedia) {
-    if(isErikMedia === "pollCreationMessage"){
-        if (TheCreator || isAdmins || !isBotAdmins){		  
-        } else {
-          replygc(`\`\`\`「 Poll Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-encuesta para este grupo`)
-    return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant }})
-        }
-    }
-  }
-       if (db.data.chats[m.chat].antilocation && isErikMedia) {
-    if(isErikMedia === "locationMessage"){
-        if (TheCreator || isAdmins || !isBotAdmins){		  
-        } else {
-          replygc(`\`\`\`「 Location Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-ubicación para este grupo`)
-    return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant }})
-        }
-    }
-  }
-       if (db.data.chats[m.chat].antidocument && isErikMedia) {
-    if(isErikMedia === "documentMessage"){
-        if (TheCreator || isAdmins || !isBotAdmins){		  
-        } else {
-          replygc(`\`\`\`「 Document Detected 」\`\`\`\n\nLo siento, pero tengo que eliminarlo porque el administrador/propietario ha activado el anti-documento para este grupo.`)
-    return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant }})
-        }
-    }
-  }
-      if (db.data.chats[m.chat].anticontact && isErikMedia) {
-    if(isErikMedia === "contactMessage"){
-        if (TheCreator || isAdmins || !isBotAdmins){		  
-        } else {
-          replygc(`\`\`\`「 Contact Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-contacto para este grupo`)
-    return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant }})
-        }
-    }
-  }
+        if (db.data.chats[m.chat].image && isErikMedia) { if (isErikMedia === "imageMessage") { if (TheCreator || isAdmins || !isBotAdmins) { } else { replygc(`\`\`\`「 Image Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-imagen para este grupo`) return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant } }) } } }
+	if (db.data.chats[m.chat].antivideo && isErikMedia) { if (isErikMedia === "videoMessage") { if (TheCreator || isAdmins || !isBotAdmins) { } else { replygc(`\`\`\`「 Video Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-video para este grupo`) return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant } }) } } }
+	if (db.data.chats[m.chat].antisticker && isErikMedia) { if (isErikMedia === "stickerMessage") { if (TheCreator || isAdmins || !isBotAdmins) { } else { replygc(`\`\`\`「 Sticker Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-sticker para este grupo`) return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant } }) } } }
+	if (db.data.chats[m.chat].antiaudio && isErikMedia) { if (isErikMedia === "audioMessage") { if (TheCreator || isAdmins || !isBotAdmins) { } else { replygc(`\`\`\`「 Audio Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-audio para este grupo`) return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant } }) } } }
+	if (db.data.chats[m.chat].antipoll && isErikMedia) { if (isErikMedia === "pollCreationMessage") { if (TheCreator || isAdmins || !isBotAdmins) { } else { replygc(`\`\`\`「 Poll Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-encuesta para este grupo`) return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant } }) } } }
+	if (db.data.chats[m.chat].antilocation && isErikMedia) { if (isErikMedia === "locationMessage") { if (TheCreator || isAdmins || !isBotAdmins) { } else { replygc(`\`\`\`「 Location Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-ubicación para este grupo`) return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant } }) } } }
+	if (db.data.chats[m.chat].antidocument && isErikMedia) { if (isErikMedia === "documentMessage") { if (TheCreator || isAdmins || !isBotAdmins) { } else { replygc(`\`\`\`「 Document Detected 」\`\`\`\n\nLo siento, pero tengo que eliminarlo porque el administrador/propietario ha activado el anti-documento para este grupo.`) return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant } }) } } }
+	if (db.data.chats[m.chat].anticontact && isErikMedia) { if (isErikMedia === "contactMessage") { if (TheCreator || isAdmins || !isBotAdmins) { } else { replygc(`\`\`\`「 Contact Detected 」\`\`\`\n\nLo siento, pero tengo que borrarlo, porque el admin/propietario ha activado el anti-contacto para este grupo`) return SenseiOfc.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant } }) } } }
+
         //respond
         if (db.data.chats[m.chat].badword) {
     for (let bak of malasPalabras) {
