@@ -1,12 +1,12 @@
 const fs = require('fs')
 const chalk = require('chalk')
 
-//tarjeta v del propietario
+//  ────────────────── [ 🌟🛠️ Tarjeta del propietario 🛠️🌟] ──────────────────  \\
 global.ytname = "YT:" //nombre de tu canal de yt
 global.socialm = "GitHub: SenseiOfc" //nombre de tu github o insta
 global.location = "America, Lima-Peru" //tu ubicación
 
-//nuevo
+// 🔄 ────────────────────────── [ NUEVO ] ───────────────────────── 🔄 \\
 global.botname = 'Bottle' //nombre de tu bot
 global.ownernumber = '+51916738232' //número del propietario
 global.ownername = 'SenseiOfc' //nombre del propietario
@@ -22,7 +22,7 @@ global.xprefix = '.'
 global.premium = ["51916738232"] // Usuario Premium
 global.hituet = 0
 
-//configuración del bot
+// ──────────────── [ ⚙️ Configuración del bot ] ──────────────── \\
 global.typemenu = 'v8' // tipo de menú 'v1' => 'v8'
 global.typereply = 'v2' // tipo de respuesta 'v1' => 'v3'
 global.autoblocknumber = '92' //establecer código de país para bloqueo automático
@@ -32,7 +32,8 @@ global.anticall = false //el bot bloquea al usuario cuando se llama
 global.autoswview = false //vista de estado/historia automática
 global.adminevent = false //mostrar mensaje de promoción/degradación
 global.groupevent = false //mostrar mensajes de actualización en el chat del grupo
-//msg
+
+// ───────────────── [ 📩 Mensajes ] ───────────────── \\
 global.mess = {
     limit: '¡Tu límite ha terminado!',
     nsfw: 'Nsfw está deshabilitado en este grupo, por favor dile al administrador que lo habilite',
@@ -40,7 +41,8 @@ global.mess = {
     error: '¡Error!',
     success: '¡Aquí tienes!'
 }
-//miniatura
+
+// ─────────────── [ 🖼️ Miniatura ] ─────────────── \\
 global.thumb = fs.readFileSync('./Media/theme/menu.jpg')
 
 let file = require.resolve(__filename)
