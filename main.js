@@ -20,37 +20,16 @@ const { imageToWebp, videoToWebp, writeExifImg, writeExifVid } = require('./lib/
 const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia, fetch, await, sleep, reSize } = require('./lib/myfunc')
 const { default: SenseiOfcConnect, getAggregateVotesInPollMessage, delay, PHONENUMBER_MCC, makeCacheableSignalKeyStore, useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto } = require("@whiskeysockets/baileys")
 
-const store = makeInMemoryStore({
-    logger: pino().child({
-        level: 'silent',
-        stream: 'store'
-    })
-})
+const store = makeInMemoryStore({ logger: pino().child({ level: 'silent', stream: 'store' }) });
+
 global.opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
 global.db = new Low(new JSONFile(`src/database.json`))
 
 global.DATABASE = global.db
-global.loadDatabase = async function loadDatabase() {
-  if (global.db.READ) return new Promise((resolve) => setInterval(function () { (!global.db.READ ? (clearInterval(this), resolve(global.db.data == null ? global.loadDatabase() : global.db.data)) : null) }, 1 * 1000))
-  if (global.db.data !== null) return
-  global.db.READ = true
-  await global.db.read()
-  global.db.READ = false
-  global.db.data = {
-    users: {},
-    database: {},
-    chats: {},
-    game: {},
-    settings: {},
-    ...(global.db.data || {})
-  }
-  global.db.chain = _.chain(global.db.data)
-}
+global.loadDatabase = async function loadDatabase() { if (global.db.READ) return new Promise((resolve) => setInterval(function () { (!global.db.READ ? (clearInterval(this), resolve(global.db.data == null ? global.loadDatabase() : global.db.data)) : null) }, 1 * 1000)); if (global.db.data !== null) return; global.db.READ = true; await global.db.read(); global.db.READ = false; global.db.data = { users: {}, database: {}, chats: {}, game: {}, settings: {}, ...(global.db.data || {}) }; global.db.chain = _.chain(global.db.data); }
 loadDatabase()
 
-if (global.db) setInterval(async () => {
-   if (global.db.data) await global.db.write()
-}, 30 * 1000)
+if (global.db) setInterval(async () => { if (global.db.data) await global.db.write() }, 30 * 1000);
 
 require('./XeonCheems10.js')
 nocache('../XeonCheems10.js', module => console.log(color('[ CHANGE ]', 'green'), color(`'${module}'`, 'green'), 'Updated'))
@@ -124,7 +103,7 @@ const {  state, saveCreds } =await useMultiFileAuthState(`./session`)
       setTimeout(async () => {
          let code = await SenseiOfc.requestPairingCode(phoneNumber)
          code = code?.match(/.{1,4}/g)?.join("-") || code
-         console.log(chalk.black(chalk.bgGreen(`Your Pairing Code : `)), chalk.black(chalk.white(code)))
+         console.log(chalk.black(chalk.bgGreen(`Tu código de vinculacion : `)), chalk.black(chalk.white(code)))
       }, 3000)
    }
 
