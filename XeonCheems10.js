@@ -804,10 +804,10 @@ async function translateToSpanish(text) { const response = await axios.get(`http
     case 'resetdbuser':
         if (!TheCreator) return StickOwner()
         let totalUsuarios = db.data.users.length
-        replygc(`Se eliminaron exitosamente ${totalUsuarios} usuarios de la base de datos`)
+        replygc(`Se eliminaron ${totalUsuarios} usuarios de la base de datos`)
         db.data.users = []
         break
-    case 'resethit':
+    case 'reinicarhit':
     case 'resettotalhit':
         if (!TheCreator) return StickOwner()
         global.db.data.settings[botNumber].totalhit = 0
@@ -962,22 +962,22 @@ case 'delprem':
         replygc("Eliminación exitosa")
     }
     break
-            case 'listprem': {
-                if (!TheCreator) return StickOwner()
-                let data = require('./src/data/role/premium.json')
-                let txt = `*------「 LIST PREMIUM 」------*\n\n`
-                for (let x of data) {
-                    txt += `Number : ${x.id}\n`
-                    txt += `Expire In: ${x.expired} ms\n`
-                SenseiOfc.sendMessage(m.chat, {
-                    text: txt,
-                    mentions: x
-                }, {
-                    quoted: m
-                })
-                }
-            }
-            break
+ case 'listprem': {
+    if (!TheCreator) return StickOwner()
+    let data = require('./src/data/role/premium.json')
+    let txt = `*------「 LIST PREMIUM 」------*\n\n`
+    for (let x of data) {
+        txt += `User: @${x.id.split('@')[0]}\n`
+        txt += `Expire In: ${x.expired} ms\n`
+    }
+    SenseiOfc.sendMessage(m.chat, {
+        text: txt,
+        mentions: [x.id]
+    }, {
+        quoted: m
+    })
+}
+break
 case 'addowner':
     if (!TheCreator) return StickOwner()
     if (!args[0]) return replygc(`Utiliza ${prefix+command} número\nEjemplo ${prefix+command} ${ownernumber}`)
@@ -1037,7 +1037,7 @@ break
 case 'join':
     try {
         if (!TheCreator) {
-            let ownerMessage = `El usuario *@${m.sender.split("@")[0]}* solicitó unirse a un grupo. Por favor, agrégalo manualmente.`;
+            let ownerMessage = `El usuario *@${m.sender.split("@")[0]}* solicitó unirse a un grupo. El enlace del grupo es ${args[0]}. Por favor, agrégalo manualmente.`;
             for (let i of owner) {
                 SenseiOfc.sendMessage(i + "@s.whatsapp.net", {
                     text: ownerMessage,
@@ -1053,7 +1053,8 @@ case 'join':
         if (!isUrl(args[0]) && !args[0].includes('whatsapp.com')) return replygc('Enlace no válido');
 
         let result = args[0].split('https://chat.whatsapp.com/')[1];
-        SenseiOfc.groupAcceptInvite(result);
+        let groupId = await SenseiOfc.groupAcceptInvite(result);
+        await SenseiOfc.sendMessage(groupId, 'Hola, acabo de unirme al grupo.');
         await replygc(`Listo`);
     } catch {
         replygc('Error al unirse al grupo');
@@ -1111,23 +1112,13 @@ case 'reportbug': {
     })
 }
 break
-case 'nombrebot': case 'setnamebot': {
-    if (!TheCreator) return StickOwner();
-    if (args.length === 0) {
-        return replygc(`El comando está incompleto. Debe ser así: setnombrebot <NuevoNombreBot>`);
-    }
-    let newBotname = args.join(' ').trim();
-    setBotInfo(newBotname);
-    replygc(`Nombre del bot cambiado a: ${newBotname}`);
-}
-break
 case 'reiniciar': case 'actualizar':
     if (!TheCreator) return StickOwner()
     replygc(`El reinicio se completará en segundos`);
     await sleep(3000);
     process.exit();
 break
-            case 'self': case 'privado': {
+case 'self': case 'privado': {
     if (!TheCreator) return StickOwner()
     SenseiOfc.public = false
     replygc('*Éxito al cambiar al modo privado*')
@@ -1407,104 +1398,44 @@ break
             })
         }
         break
-case 'setnombrebot':
-case 'nombrebot': {
+case 'configuracion':
+    const subCommand = args[0];
+    const subArgs = args.slice(1);
+
     if (!TheCreator) return StickOwner()
-    if (args.length === 0) {
-        return replygc(`El comando está incompleto. Debe ser así: setnombrebot <NuevoNombreBot>`)
+    if (subArgs.length === 0) {
+        return replygc(`El comando está incompleto. Debe ser así: configuracion ${subCommand} <NuevoValor>`)
     }
-    let newBotname = args.join(' ').trim()
-    setBotInfo(newBotname)
-    replygc(`Nombre del bot cambiado a: ${newBotname}`)
-}
-break
-case 'setnombrepropietario':
-case 'nombrepropietario': {
-    if (!TheCreator) return StickOwner()
-    if (args.length === 0) {
-        return replygc(`El comando está incompleto. Debe ser así: setnombrepropietario <NuevoNombrePropietario>`)
+
+    const fields = {
+        'setnombrebot': 'botname',
+        'nombrebot': 'botname',
+        'setnombrepropietario': 'ownername',
+        'nombrepropietario': 'ownername',
+        'setubicacion': 'location',
+        'ubicacion': 'location',
+        'setnumeropropietario': 'ownernumber',
+        'numeropropietario': 'ownernumber',
+        'setnombreyt': 'ytname',
+        'nombreyt': 'ytname',
+        'setsocialmedia': 'socialm',
+        'socialmedia': 'socialm',
+        'setemojitema': 'themeemoji',
+        'emojitema': 'themeemoji',
+        'setwebsitex': 'websitex',
+        'websitex': 'websitex',
+        'setlink': 'wagc',
+        'newlink': 'wagc'
+    };
+
+    const field = fields[subCommand];
+    if (!field) {
+        return replygc(`Comando desconocido: ${subCommand}. Por favor, verifica e intenta de nuevo.`)
     }
-    let newOwnername = args.join(' ').trim()
-    setBotInfo(global.botname, newOwnername, global.location, global.ownernumber, global.ytname, global.socialm, global.themeemoji, global.websitex, global.wagc)
-    replygc(`Nombre del propietario cambiado a: ${newOwnername}`)
-}
-break
-case 'setubicacion':
-case 'ubicacion': {
-    if (!TheCreator) return StickOwner()
-    if (args.length === 0) {
-        return replygc(`El comando está incompleto. Debe ser así: setubicacion <NuevaUbicación>`)
-    }
-    let newLocation = args.join(' ').trim()
-    setBotInfo(global.botname, global.ownername, newLocation, global.ownernumber, global.ytname, global.socialm, global.themeemoji, global.websitex, global.wagc)
-    replygc(`Ubicación cambiada a: ${newLocation}`)
-}
-break
-case 'setnumeropropietario':
-case 'numeropropietario': {
-    if (!TheCreator) return StickOwner()
-    if (args.length === 0) {
-        return replygc(`El comando está incompleto. Debe ser así: setnumeropropietario <NuevoNúmero>`)
-    }
-    let newOwnernumber = args.join(' ').trim()
-    setBotInfo(global.botname, global.ownername, global.location, newOwnernumber, global.ytname, global.socialm, global.themeemoji, global.websitex, global.wagc)
-    replygc(`Número del propietario cambiado a: ${newOwnernumber}`)
-}
-break
-case 'setnombreyt':
-case 'nombreyt': {
-    if (!TheCreator) return StickOwner()
-    if (args.length === 0) {
-        return replygc(`El comando está incompleto. Debe ser así: setnombreyt <NuevoNombreYT>`)
-    }
-    let newYtname = args.join(' ').trim()
-    setBotInfo(global.botname, global.ownername, global.location, global.ownernumber, newYtname, global.socialm, global.themeemoji, global.websitex, global.wagc)
-    replygc(`Nombre del canal de YouTube cambiado a: ${newYtname}`)
-}
-break
-case 'setsocialmedia':
-case 'socialmedia': {
-    if (!TheCreator) return StickOwner()
-    if (args.length === 0) {
-        return replygc(`El comando está incompleto. Debe ser así: setsocialmedia <NuevaRedSocial>`)
-    }
-    let newSocialm = args.join(' ').trim()
-    setBotInfo(global.botname, global.ownername, global.location, global.ownernumber, global.ytname, newSocialm, global.themeemoji, global.websitex, global.wagc)
-    replygc(`Redes sociales del propietario cambiadas a: ${newSocialm}`)
-}
-break
-case 'setemojitema':
-case 'emojitema': {
-    if (!TheCreator) return StickOwner()
-    if (args.length === 0) {
-        return replygc(`El comando está incompleto. Debe ser así: setemojitema <NuevoEmojiTema>`)
-    }
-    let newThemeemoji = args.join(' ').trim()
-    setBotInfo(global.botname, global.ownername, global.location, global.ownernumber, global.ytname, global.socialm, newThemeemoji, global.websitex, global.wagc)
-    replygc(`Emoji del tema cambiado a: ${newThemeemoji}`)
-}
-break
-case 'setwebsitex':
-case 'websitex': {
-    if (!TheCreator) return StickOwner()
-    if (args.length === 0) {
-        return replygc(`El comando está incompleto. Debe ser así: setwebsitex <NuevoSitioWebPropietario>`)
-    }
-    let newWebsitex = args.join(' ').trim()
-    setBotInfo(global.botname, global.ownername, global.location, global.ownernumber, global.ytname, global.socialm, global.themeemoji, newWebsitex, global.wagc)
-    replygc(`Sitio web del propietario cambiado a: ${newWebsitex}`)
-}
-break
-case 'setlink':
-case 'newlink': {
-    if (!TheCreator) return StickOwner()
-    if (args.length === 0) {
-        return replygc(`El comando está incompleto. Debe ser así: setwebsitex <NuevoSitioWebX>`)
-    }
-    let newWagc = args.join(' ').trim()
-    setBotInfo(global.botname, global.ownername, global.location, global.ownernumber, global.ytname, global.socialm, global.themeemoji, global.websitex, newWagc)
-    replygc(`Sitio web X cambiado a: ${newWagc}`)
-}
+
+    let newValue = subArgs.join(' ').trim()
+    global[field] = newValue;
+    replygc(`${field} cambiado a: ${newValue}`)
 break
 case 'activar': {
     if (args.length < 1) return replygc('Especifica la función que deseas activar.\nEjemplo: activar adminevent\n\nLas funciones disponibles son:\n -welcome\n -antilink\n -antilinkgc\n -antilocation\n -anticontact\n -anticontact\n -anticontact\n -antidocument\n -antimedia\n -antiviewonce\n -antibot\n -antivirtex\n -antivirtex\n -antivideo\n -antiimage\n -antisticker\n -antipoll\n -antiforeign\n -antiaudio\n -adminevent\n -groupevent\n -ephemeral\n -autoswview\n -autostatusview\n -unavailable\n -autorecordtype\n -autorecord\n -autotype\n -autobio\n -autosticker\n -autoblock\n -sologc\n -solopv\n -onlyindia\n -onlyindonumber')
@@ -2306,7 +2237,7 @@ case 'setgcpp':
                     replygc(mess.done)
                 }
                 break
-            case 'tagall':
+            case 'tagall': case 'llamaratodos': case 'invocar': case 'lamartodos':
                 if (!m.isGroup) return StickGroup()
                 if (!isAdmins && !isGroupOwner && !TheCreator) return StickAdmin()
                 if (!isBotAdmins) return StickBotAdmin()
@@ -2487,27 +2418,43 @@ case 'repository':
     const response = await axios.get(`https://api.github.com/repos/${username}/${repoName}`)
     if (response.status === 200) {
       const repoData = response.data
+      const ownerAvatar = repoData.owner.avatar_url
+      const createdAt = new Date(repoData.created_at).toLocaleDateString('es-ES', { timeZone: 'UTC' })
+      const updatedAt = new Date(repoData.updated_at).toLocaleDateString('es-ES', { timeZone: 'UTC' })
+      const license = repoData.license ? repoData.license.name : 'No especificado'
+      const topics = repoData.topics.length > 0 ? repoData.topics.join(', ') : 'No especificado'
       const formattedInfo = `
 ${themeemoji} Nombre del Repositorio: ${repoData.name}
 ${themeemoji} Descripción: ${repoData.description}
 ${themeemoji} Propietario: ${repoData.owner.login}
 ${themeemoji} Estrellas: ${repoData.stargazers_count}
 ${themeemoji} Forks: ${repoData.forks_count}
+${themeemoji} Lenguaje: ${repoData.language || 'No especificado'}
+${themeemoji} Fecha de creación: ${createdAt}
+${themeemoji} Última actualización: ${updatedAt}
+${themeemoji} Licencia: ${license}
+${themeemoji} Temas: ${topics}
 ${themeemoji} URL: ${repoData.html_url}
-     
- `.trim()
-      await SenseiOfc.relayMessage(m.chat,  {
-        requestPaymentMessage: {
-          currencyCodeIso4217: 'PEN',
-          amount1000: 69000,
-          requestFrom: m.sender,
-          noteMessage: {
-          extendedTextMessage: {
-          text: formattedInfo,
-          contextInfo: {
+`.trim()
+      await ndSenseiOfcMessage(from, {
+        text: formattedInfo,
+        mentions: [sender],
+        contextInfo: {
+          forwardingScore: 9999999,
+          isForwarded: false,
+          mentionedJid: [sender],
           externalAdReply: {
-          showAdAttribution: true
-          }}}}}}, {})
+            showAdAttribution: true,
+            renderLargerThumbnail: true,
+            title: botname,
+            containsAutoReply: true,
+            mediaType: 1,
+            thumbnail: fs.readFileSync(ownerAvatar),
+            mediaUrl: `${repoData.html_url}`,
+            sourceUrl: `${repoData.html_url}`
+          }
+        }
+      })
     } else {
       await replygc(`No se puede obtener la información del repositorio`)
     }
