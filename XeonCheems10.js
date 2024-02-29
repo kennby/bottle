@@ -149,17 +149,10 @@ module.exports = SenseiOfc = async (SenseiOfc, m, chatUpdate, store) => {
         const StickGroup = () => { let StikRep = fs.readFileSync('./Media/theme/sticker_reply/group.webp'); SenseiOfc.sendMessage(from, { sticker: StikRep }, { quoted: m }); }
         const StickPrivate = () => { let StikRep = fs.readFileSync('./Media/theme/sticker_reply/private.webp'); SenseiOfc.sendMessage(from, { sticker: StikRep }, { quoted: m }); }
         //premium
-        async function replyprem(teks) {
-    	replygc(`Esta función es para usuarios premium, comuníquese con el propietario para convertirse en usuario premium`)
-}
+        async function replyprem(teks) { replygc(`Esta función es para usuarios premium, comuníquese con el propietario para convertirse en usuario premium`)}
         //script replier
-    async function sendSenseiOfcMessage(chatId, message, options = {}){
-    let generate = await generateWAMessage(chatId, message, options)
-    let type2 = getContentType(generate.message)
-    if ('contextInfo' in options) generate.message[type2].contextInfo = options?.contextInfo
-    if ('contextInfo' in message) generate.message[type2].contextInfo = message?.contextInfo
-    return await SenseiOfc.relayMessage(chatId, generate.message, { messageId: generate.key.id })
-}
+    	async function sendSenseiOfcMessage(chatId, message, options = {}) { let generate = await generateWAMessage(chatId, message, options); let type2 = getContentType(generate.message); if ('contextInfo' in options) generate.message[type2].contextInfo = options?.contextInfo; if ('contextInfo' in message) generate.message[type2].contextInfo = message?.contextInfo; return await SenseiOfc.relayMessage(chatId, generate.message, { messageId: generate.key.id }); }
+
         //reply
         async function replygc(teks) {
             if (typereply === 'v1') {
@@ -403,9 +396,7 @@ var xeonlod = [
 ]
 let { key } = await SenseiOfc.sendMessage(from, {text: 'ʟᴏᴀᴅɪɴɢ...'})
 
-for (let i = 0; i < xeonlod.length; i++) {
-await SenseiOfc.sendMessage(from, {text: xeonlod[i], edit: key })
-}
+for (let i = 0; i < xeonlod.length; i++) { await SenseiOfc.sendMessage(from, { text: xeonlod[i], edit: key }) }
 }
 
 async function obfus(query) {
@@ -501,7 +492,15 @@ if (db.data.settings[botNumber].autobio) { SenseiOfc.updateProfileStatus(`${botn
 	for (let i of owner) { list.push({ displayName: await SenseiOfc.getName(i), vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await SenseiOfc.getName(i)}\nFN:${await SenseiOfc.getName(i)}\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Click here to chat\nitem2.EMAIL;type=INTERNET:${ytname}\nitem2.X-ABLabel:YouTube\nitem3.URL:${socialm}\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;${location};;;;\nitem4.X-ABLabel:Region\nEND:VCARD` }) }
 
         //console log
-        if (isCommand) { let fecha = moment().format('LLLL'); console.log(color(`\n< ================================================== >\n`, 'cyan')); console.log(chalk.black(chalk.bgWhite(!isCommand ? '[ MENSAJE ]' : '[ COMANDO ]')), chalk.black(chalk.bgGreen(fecha)), chalk.black(chalk.bgBlue(budy || m.mtype)) + '\n' + chalk.magenta('=> De'), chalk.green(pushname), chalk.yellow(m.sender) + '\n' + chalk.blueBright('=> En'), chalk.green(m.isGroup ? pushname : 'Chat privado', m.chat)); global.db.data.settings[botNumber].totalhit += 1; }
+       if (isCommand) {
+    let fecha = moment().format('LLLL');
+    console.log(color('\n< ================================================== >', 'cyan'));
+    console.log(chalk.black(chalk.bgWhiteBright(!isCommand ? ' [ MENSAJE ] ' : ' [ COMANDO ] ')), chalk.black(chalk.bgGreenBright(fecha)), chalk.black(chalk.bgBlueBright(budy || m.mtype)) + '\n' + 
+                chalk.magenta(' => De:'), chalk.green(pushname), chalk.yellow(m.sender) + '\n' + 
+                chalk.blueBright(' => En:'), chalk.green(m.isGroup ? pushname : 'Chat privado', m.chat));
+    global.db.data.settings[botNumber].totalhit += 1;
+}
+
 
         //antiviewonce
 	if ( db.data.chats[m.chat].antiviewonce && m.isGroup && m.mtype == 'viewOnceMessageV2') { if (m.isBaileys && m.fromMe) return; let val = { ...m }; let msg = val.message?.viewOnceMessage?.message || val.message?.viewOnceMessageV2?.message; delete msg[Object.keys(msg)[0]].viewOnce; val.message = msg; await SenseiOfc.sendMessage(m.chat, { forward: val }, { quoted: m }); }
