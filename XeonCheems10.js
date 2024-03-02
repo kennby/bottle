@@ -2136,16 +2136,16 @@ break
                 replygc(mess.done)
                 break
                 case 'userjid':{
-          	if(!TheCreator) return StickOwner()
-        const groupMetadata = m.isGroup ? await SenseiOfc.groupMetadata(m.chat).catch((e) => {}) : ""
-		const participants = m.isGroup ? await groupMetadata.participants : ""
-    let textt = `_Here is jid address of all users of_\n *- ${groupMetadata.subject}*\n\n`
+    if (!TheCreator) return StickOwner()
+    const groupMetadata = m.isGroup ? await SenseiOfc.groupMetadata(m.chat).catch((e) => {}) : ""
+    const participants = m.isGroup ? await groupMetadata.participants : ""
+    let textt = `_Aquí está la dirección JID de todos los usuarios de_\n *- ${groupMetadata.subject}*\n\n`
     for (let mem of participants) {
-            textt += `${themeemoji} ${mem.id}\n`
-        }
-      replygc(textt)
+        textt += `${themeemoji} ${mem.id}\n`
     }
-    break
+    replygc(textt)
+}
+break
 case 'creategc': case 'creargrupo': {
     if (!TheCreator) return StickOwner()
     if (!args.join(" ")) return replygc(`Usa ${prefix+command} nombregrupo`)
