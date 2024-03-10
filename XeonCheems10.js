@@ -153,7 +153,6 @@ module.exports = SenseiOfc = async (SenseiOfc, m, chatUpdate, store) => {
         async function replyprem(teks) { replygc(`Esta función es para usuarios premium, comuníquese con el propietario para convertirse en usuario premium`)}
         //script replier
     	async function sendSenseiOfcMessage(chatId, message, options = {}) { let generate = await generateWAMessage(chatId, message, options); let type2 = getContentType(generate.message); if ('contextInfo' in options) generate.message[type2].contextInfo = options?.contextInfo; if ('contextInfo' in message) generate.message[type2].contextInfo = message?.contextInfo; return await SenseiOfc.relayMessage(chatId, generate.message, { messageId: generate.key.id }); }
-
         //reply
         async function replygc(teks) {
             if (typereply === 'v1') {
