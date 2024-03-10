@@ -1432,7 +1432,7 @@ case 'configuracion':
     global[field] = newValue;
     replygc(`${field} cambiado a: ${newValue}`)
 break
-case 'activar': {
+case 'activar': case 'enable':{
     if (args.length < 1) return replygc('Especifica la función que deseas activar.\nEjemplo: activar adminevent\n\nLas funciones disponibles son:\n -welcome\n -antilink\n -antilinkgc\n -antilocation\n -anticontact\n -anticontact\n -anticontact\n -antidocument\n -antimedia\n -antiviewonce\n -antibot\n -antivirtex\n -antivirtex\n -antivideo\n -antiimage\n -antisticker\n -antipoll\n -antiforeign\n -antiaudio\n -adminevent\n -groupevent\n -ephemeral\n -autoswview\n -autostatusview\n -unavailable\n -autorecordtype\n -autorecord\n -autotype\n -autobio\n -autosticker\n -autoblock\n -sologc\n -solopv\n -onlyindia\n -onlyindonumber')
     const functionToActivate = args.join(' ').toLowerCase()
     switch (functionToActivate) {
@@ -1666,7 +1666,7 @@ case 'activar': {
 }
 break
 
-case 'desactivar': {
+case 'desactivar': case 'disable':{
     if (args.length < 1) return replygc('Especifica la función que deseas desactivar.\nEjemplo: desactivar welcome\n\nLas funciones disponibles son:\n -welcome\n -antilink\n -antilinkgc\n -antilocation\n -anticontact\n -anticontact\n -anticontact\n -antidocument\n -antimedia\n -antiviewonce\n -antibot\n -antivirtex\n -antivirtex\n -antivideo\n -antiimage\n -antisticker\n -antipoll\n -antiforeign\n -antiaudio\n -adminevent\n -groupevent\n -ephemeral\n -autoswview\n -autostatusview\n -unavailable\n -autorecordtype\n -autorecord\n -autotype\n -autobio\n -autosticker\n -autoblock\n -sologc\n -solopv\n -onlyindia\n -onlyindonumber')
     const functionToDeactivate = args.join(' ').toLowerCase()
     if (!m.isGroup) return StickGroup()
