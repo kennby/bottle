@@ -1,4 +1,5 @@
 require('./lib/listmenu')
+const fluentFFmpeg = require('fluent-ffmpeg');
 const { BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser, getContentType } = require('@whiskeysockets/baileys')
 const os = require('os')
 const fs = require('fs')
@@ -81,7 +82,7 @@ module.exports = SenseiOfc = async (SenseiOfc, m, chatUpdate, store) => {
         var body = (m.mtype === 'conversation') ? m.message.conversation : (m.mtype == 'imageMessage') ? m.message.imageMessage.caption : (m.mtype == 'videoMessage') ? m.message.videoMessage.caption : (m.mtype == 'extendedTextMessage') ? m.message.extendedTextMessage.text : (m.mtype == 'buttonsResponseMessage') ? m.message.buttonsResponseMessage.selectedButtonId : (m.mtype == 'listResponseMessage') ? m.message.listResponseMessage.singleSelectReply.selectedRowId : (m.mtype == 'templateButtonReplyMessage') ? m.message.templateButtonReplyMessage.selectedId : (m.mtype === 'messageContextInfo') ? (m.message.buttonsResponseMessage?.selectedButtonId || m.message.listResponseMessage?.singleSelectReply.selectedRowId || m.text) : ''
         var budy = (typeof m.text == 'string' ? m.text : '')
         //prefix 1
-        var prefix = ['.', '/'] ? /^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi.test(body) ? body.match(/^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi)[0] : "" : xprefix
+        var prefix = ['.', '/', ''] ? /^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi.test(body) ? body.match(/^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi)[0] : "" : xprefix
         const isCmd = body.startsWith(prefix, '')
         const isCmd2 = body.startsWith(prefix)
         const command = body.replace(prefix, '').trim().split(/ +/).shift().toLowerCase()
@@ -961,22 +962,24 @@ case 'delprem':
         replygc("Eliminación exitosa")
     }
     break
- case 'listprem': {
-    if (!TheCreator) return StickOwner()
-    let data = require('./src/data/role/premium.json')
-    let txt = `*------「 LIST PREMIUM 」------*\n\n`
-    for (let x of data) {
-        txt += `User: @${x.id.split('@')[0]}\n`
-        txt += `Expire In: ${x.expired} ms\n`
-    }
-    SenseiOfc.sendMessage(m.chat, {
-        text: txt,
-        mentions: [x.id]
-    }, {
-        quoted: m
-    })
-}
-break
+    case 'listprem': {
+        if (!TheCreator) return StickOwner()
+        let data = require('./src/data/role/premium.json')
+        let txt = `*------「 LIST PREMIUM 」------*\n\n`
+        let mentions = []
+        for (let x of data) {
+            txt += `User: @${x.id.split('@')[0]}\n`
+            txt += `Expire In: ${x.expired} ms\n`
+            mentions.push(x.id)
+        }
+        SenseiOfc.sendMessage(m.chat, {
+            text: txt,
+            mentions: mentions
+        }, {
+            quoted: m
+        })
+    }    
+        break
 case 'addowner':
     if (!TheCreator) return StickOwner()
     if (!args[0]) return replygc(`Utiliza ${prefix+command} número\nEjemplo ${prefix+command} ${ownernumber}`)
@@ -996,15 +999,15 @@ case 'delowner':
     fs.writeFileSync('./src/data/role/owner.json', JSON.stringify(owner))
     replygc(`El número ${ya} ha sido eliminado de la lista de propietarios por el propietario!!!`)
     break
-case 'listowner': {
-                let teks = '┌──⭓「 *List Owner* 」\n│\n'
-                for (let x of owner) {
-                    teks += `│⭔ ${x}\n`
-                }
-                teks += `│\n└────────────⭓\n\n*Total : ${owner.length}*`
-                replygc(teks)
-            }
-            break
+    case 'listowner': {
+        let teks = '┌──⭓「 *List Owner* 」\n│\n'
+        for (let x of owner) {
+            teks += `│⭔ @${x.split("@")[0]}\n` // Añade el símbolo '@' para etiquetar al propietario
+        }
+        teks += `│\n└────────────⭓\n\n*Total : ${owner.length}*`
+        SenseiOfc.sendMessage(from, {text: teks, mentions: owner}, { quoted: m }) // Añade los propietarios a la lista de menciones
+    }
+        break
 case 'delsession':
 case 'clearsession': {
     if (!TheCreator) return StickOwner()
@@ -1216,6 +1219,26 @@ case 'salir':
         await SenseiOfc.groupLeave(m.chat)
     }, 1000)
     break
+    case 'comprobar':
+        if (!TheCreator) return StickOwner()
+        let minimoIntegrantes = parseInt(text.trim()) // Asume que el mínimo de integrantes se proporciona después del comando
+        if (!minimoIntegrantes) {
+            replygc('Por favor, proporciona un número después del comando. Por ejemplo: "comprobar 5" hará que el bot salga de los grupos que tienen menos de 5 integrantes.')
+            break
+        }
+        let getGroups = await SenseiOfc.groupFetchAllParticipating()
+        let groups = Object.entries(getGroups).slice(0).map((entry) => entry[1])
+        for (let grupo of groups) {
+            let metadata = await SenseiOfc.groupMetadata(grupo.id)
+            if (metadata.participants.length < minimoIntegrantes) {
+                await SenseiOfc.sendMessage(grupo.id, `Este grupo tiene menos de ${minimoIntegrantes} integrantes. Los grupos deben tener al menos ${minimoIntegrantes} integrantes. El bot saldrá del grupo en breve.`)
+                setTimeout(async () => {
+                    await SenseiOfc.groupLeave(grupo.id)
+                }, 1000)
+            }
+        }
+        replygc(`El bot ha salido de los grupos que tienen menos de ${minimoIntegrantes} integrantes`)
+        break
 case 'bc':
 case 'broadcast':
     if (!TheCreator) return StickOwner()
@@ -1321,22 +1344,7 @@ case 'getcase':
     }
 break
 //group
-case 'antibadword':
-case 'antitoxic':{
-    if (!m.isGroup) return StickGroup()
-    if (!isBotAdmins) return StickBotAdmin()
-    if (!isAdmins && !TheCreator) return StickAdmin()
-    if (args.length < 1) return replygc('¿on/off?')
-    if (args[0] === 'on') {
-        db.data.chats[from].badword = true
-        replygc(`${command} habilitado`)
-    } else if (args[0] === 'off') {
-        db.data.chats[from].badword = false
-        replygc(`${command} deshabilitado`)
-    }
-}
-break
-case 'react': {
+case 'react': case 'reaccionar':{
     if (!TheCreator) return StickOwner()
     reactionMessage = {
         react: {
@@ -1347,37 +1355,25 @@ case 'react': {
     SenseiOfc.sendMessage(m.chat, reactionMessage)
 }
 break
-case 'nsfw': {
-    if (!m.isGroup) return StickGroup()
-    if (!isBotAdmins) return StickBotAdmin()
-    if (!isAdmins && !TheCreator) return StickAdmin()
-    if (args[0] === "on") {
-        if (AntiNsfw) return replygc('Ya está activado')
-        ntnsfw.push(from)
-        fs.writeFileSync('./src/data/function/nsfw.json', JSON.stringify(ntnsfw))
-        replygc('Éxito al activar NSFW en este grupo')
-        var groupe = await SenseiOfc.groupMetadata(from)
-        var members = groupe['participants']
-        var mems = []
-        members.map(async adm => {
-            mems.push(adm.id.replace('c.us', 's.whatsapp.net'))
-        })
-        SenseiOfc.sendMessage(from, {text: `\`\`\`「 ⚠️Advertencia⚠️ 」\`\`\`\n\nLa función NSFW (no seguro para el trabajo) ha sido habilitada en este grupo, ¡lo que significa que uno puede acceder a contenido gráfico!`, contextInfo: { mentionedJid : mems }}, {quoted:m})
-    } else if (args[0] === "off") {
-        if (!AntiNsfw) return replygc('Ya está desactivado')
-        let off = ntnsfw.indexOf(from)
-        ntnsfw.splice(off, 1)
-        fs.writeFileSync('./src/data/function/nsfw.json', JSON.stringify(ntnsfw))
-        replygc('Éxito al desactivar NSFW en este grupo')
-    } else {
-        await replygc(`Por favor, escriba la opción\n\nEjemplo: ${prefix + command} on\nEjemplo: ${prefix + command} off\n\non para habilitar\noff para desactivar`)
-    }
-}
-break
             case 'id':{
             replygc(from)
            }
           break
+          case 'encuesta1': {
+            if (!TheCreator) return StickOwner()
+            let poll = "Selecciona un número"
+            let options = ['1', '2', '3']
+            await SenseiOfc.sendMessage(m.chat, {
+                text: poll + '\nOpciones:\n' + options.join('\n')
+            })
+        }
+        break
+        
+        case '1': case '2': case '3': {
+            await replygc('Seleccionaste la opción ' + text)
+        }
+        break
+        
             case 'poll': case 'encuesta': {
 	if (!TheCreator) return StickOwner()
             let [poll, opt] = text.split("|")
@@ -1403,7 +1399,7 @@ case 'configuracion':
 
     if (!TheCreator) return StickOwner()
     if (subArgs.length === 0) {
-        return replygc(`El comando está incompleto. Debe ser así: configuracion ${subCommand} <NuevoValor>`)
+        return replygc(`El comando está incompleto. Debe ser así: configuracion .${subCommand} <NuevoValor>`)
     }
 
     const fields = {
@@ -1438,491 +1434,487 @@ case 'configuracion':
 break
 case 'activar': {
     if (args.length < 1) return replygc('Especifica la función que deseas activar.\nEjemplo: activar adminevent\n\nLas funciones disponibles son:\n -welcome\n -antilink\n -antilinkgc\n -antilocation\n -anticontact\n -anticontact\n -anticontact\n -antidocument\n -antimedia\n -antiviewonce\n -antibot\n -antivirtex\n -antivirtex\n -antivideo\n -antiimage\n -antisticker\n -antipoll\n -antiforeign\n -antiaudio\n -adminevent\n -groupevent\n -ephemeral\n -autoswview\n -autostatusview\n -unavailable\n -autorecordtype\n -autorecord\n -autotype\n -autobio\n -autosticker\n -autoblock\n -sologc\n -solopv\n -onlyindia\n -onlyindonumber')
-
     const functionToActivate = args.join(' ').toLowerCase()
-
     switch (functionToActivate) {
 	case 'welcome':
-            if (!m.isGroup) return replygc('Esta función solo se puede activar en grupos')
-            if (!isAdmins && !TheCreator) return StickAdmin()
+        if (!m.isGroup) return StickGroup()
+		if (!isAdmins && !TheCreator) return StickAdmin()
             welcome = true
             replygc('Función de bienvenida activada')
             break
         case 'antiaudio':
-        case 'antiforeign':
-        case 'antipoll':
-        case 'antisticker':
-        case 'antiimage':
-        case 'antivideo':
-        case 'antivirtex':
-        case 'antibot':
-        case 'antiviewonce':
-        case 'antimedia':
-        case 'antidocument':
-        case 'anticontact':
-        case 'antilocation':
-        case 'antilink':
-        case 'antilinkgc':
-        case 'adminevent':
-        case 'groupevent':
-        case 'ephemeral':
-        case 'autoswview':
-        case 'autostatusview':
-        case 'unavailable':
-        case 'autorecordtype':
-        case 'autorecord':
-        case 'autotype':
-        case 'autobio':
-        case 'autosticker':
-        case 'autostickergc':
-        case 'autoblock':
-        case 'sologc':
-        case 'onlygc':
-        case 'solopv':
-        case 'onlypc':
-        case 'onlyindia':
-        case 'onlyindianumber':
-        case 'onlyindo':
-        case 'onlyindonumber':
-        case 'self':
-        case 'privado':
-        case 'public':
-        case 'publico':
-
-            switch (functionToActivate) {
-		case 'antiaudio':
-		if (!m.isGroup) return StickGroup()
+        if (!m.isGroup) return StickGroup()
 		if (!isBotAdmins) return StickBotAdmin()
 		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antiaudio = true
-                    replygc('Función antiaudio activada')
-                    break
-                case 'antiforeign':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[m.chat].antiforeignnum = true
-                    replygc('Función antiforeign activada')
-                    break
-                case 'antipoll':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antipoll = true
-                    replygc('Función antipoll activada')
-                    break
-                case 'antisticker':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antisticker = true
-                    replygc('Función antisticker activada')
-                    break
-                case 'antiimage':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antiimage = true
-                    replygc('Función antiimage activada')
-                    break
-                case 'antivideo':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antivideo = true
-                    replygc('Función antivideo activada')
-                    break
-                case 'antivirtex':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antivirtex = true
-                    replygc('Función antivirtex activada')
-                    break
-                case 'antibot':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antibot = true
-                    replygc('Función antibot activada')
-                    break
-                case 'antiviewonce':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antiviewonce = true
-                    replygc('Función antiviewonce activada')
-                    break
-                case 'antimedia':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antimedia = true
-                    replygc('Función antimedia activada')
-                    break
-                case 'antidocument':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antidocument = true
-                    replygc('Función antidocument activada')
-                    break
-                case 'anticontact':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].anticontact = true
-                    replygc('Función anticontact activada')
-                    break
-                case 'antilocation':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antilocation = true
-                    replygc('Función antilocation activada')
-                    break
-                case 'antilink':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antilink = true
-                    replygc('Función antilink activada')
-                    break
-                case 'antilinkgc':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antilinkgc = true
-                    replygc('Función antilinkgc activada')
-                    break
-                case 'adminevent':
-            if (!isAdmins && !TheCreator) return StickAdmin()
-                    adminevent = true
-                    replygc('Función adminevent activada')
-                    break
-                case 'groupevent':
-            if (!isAdmins && !TheCreator) return StickAdmin()
-                    groupevent = true
-                    replygc('Función groupevent activada')
-                    break
-                case 'ephemeral':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    await SenseiOfc.sendMessage(m.chat, { disappearingMessagesInChat: WA_DEFAULT_EPHEMERAL })
-                    replygc('Función ephemeral activada')
-                    break
-                case 'autoswview':
-                case 'autostatusview':
-            if (!isAdmins && !TheCreator) return StickAdmin()
-                    antiswview = true
-                    replygc('Función autoswview/autostatusview activada')
-                    break
-                case 'unavailable':
-            if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].online = false
-                    replygc('Función unavailable activada')
-                    break
-                case 'autorecordtype':
-            if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].autorecordtype = true
-                    replygc('Función autorecordtype activada')
-                    break
-                case 'autorecord':
-            if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].autorecord = true
-                    replygc('Función autorecord activada')
-                    break
-                case 'autotype':
-            if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].autotype = true
-                    replygc('Función autotype activada')
-                    break
-                case 'autobio':
-            if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].autobio = true
-                    replygc('Función autobio activada')
-                    break
-                case 'autosticker':
-                case 'autostickergc':
-		if (!m.isGroup) return StickGroup()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].autosticker = true
-                    replygc('Función autosticker activada')
-                    break
-                case 'autoblock':
-            if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].autoblocknum = true
-                    replygc('Función autoblock activada')
-                    break
-                case 'sologc':
-                case 'onlygc':
-            if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].onlygrub = true
-                    replygc('Función sologc/onlygc activada')
-                    break
-                case 'solopv':
-                case 'onlypc':
-            if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].onlypc = true
-                    replygc('Función solopv/onlypc activada')
-                    break
-                case 'onlyindia':
-                case 'onlyindianumber':
-            if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].onlyindia = true
-                    replygc('Función onlyindia activada')
-                    break
-                case 'onlyindo':
-                case 'onlyindonumber':
-            if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].onlyindo = true
-                    replygc('Función onlyindo activada')
-                    break
-                    }
-                default:
-            replygc('Función no válida. Las funciones disponibles son:\n\n -welcome\n -antilink\n -antilinkgc\n -antilocation\n -anticontact\n -anticontact\n -anticontact\n -antidocument\n -antimedia\n -antiviewonce\n -antibot\n -antivirtex\n -antivirtex\n -antivideo\n -antiimage\n -antisticker\n -antipoll\n -antiforeign\n -antiaudio\n -adminevent\n -groupevent\n -ephemeral\n -autoswview\n -autostatusview\n -unavailable\n -autorecordtype\n -autorecord\n -autotype\n -autobio\n -autosticker\n -autoblock\n -sologc\n -solopv\n -onlyindia\n -onlyindonumber')
-    }
-}
-break
-case 'desactivar': {
-    if (args.length < 1) return replygc('Especifica la función que deseas desactivar.\nEjemplo: desactivar welcome\n\nLas funciones disponibles son:\n -welcome\n -antilink\n -antilinkgc\n -antilocation\n -anticontact\n -anticontact\n -anticontact\n -antidocument\n -antimedia\n -antiviewonce\n -antibot\n -antivirtex\n -antivirtex\n -antivideo\n -antiimage\n -antisticker\n -antipoll\n -antiforeign\n -antiaudio\n -adminevent\n -groupevent\n -ephemeral\n -autoswview\n -autostatusview\n -unavailable\n -autorecordtype\n -autorecord\n -autotype\n -autobio\n -autosticker\n -autoblock\n -sologc\n -solopv\n -onlyindia\n -onlyindonumber')
-
-    const functionToDeactivate = args.join(' ').toLowerCase()
-
-    switch (functionToDeactivate) {
-        case 'welcome':
-            if (!m.isGroup) return StickGroup()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-            if (!isAdmins && !TheCreator) return StickAdmin()
-            welcome = false
-            replygc('Función de bienvenida desactivada')
+            db.data.chats[from].antiaudio = true
+            replygc('Función antiaudio activada')
             break
-        case 'antiaudio':
         case 'antiforeign':
-        case 'antipoll':
-        case 'antisticker':
-        case 'antiimage':
-        case 'antivideo':
-        case 'antivirtex':
-        case 'antibot':
-        case 'antiviewonce':
-        case 'antimedia':
-        case 'antidocument':
-        case 'anticontact':
-        case 'antilocation':
-        case 'antilink':
-        case 'antilinkgc':
-	case 'adminevent':
-        case 'groupevent':
-        case 'ephemeral':
+        if (!m.isGroup) return StickGroup()
+		if (!isBotAdmins) return StickBotAdmin()
+		if (!isAdmins && !TheCreator) return StickAdmin()
+            db.data.chats[m.chat].antiforeignnum = true
+            replygc('Función antiforeign activada')
+            break
+            case 'antipoll':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antipoll = true
+                replygc('Función antipoll activada')
+                break
+            case 'antisticker':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antisticker = true
+                replygc('Función antisticker activada')
+                break
+            case 'antiimage':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antiimage = true
+                replygc('Función antiimage activada')
+                break
+            case 'antivideo':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antivideo = true
+                replygc('Función antivideo activada')
+                break
+            case 'antivirtex':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antivirtex = true
+                replygc('Función antivirtex activada')
+                break
+            case 'antibot':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antibot = true
+                replygc('Función antibot activada')
+                break
+            case 'antiviewonce':
+            if (!m.isGroup) return StickGroup()
+            if (!isBotAdmins) return StickBotAdmin()
+            if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antiviewonce = true
+                replygc('Función antiviewonce activada')
+                break
+            case 'antimedia':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antimedia = true
+                replygc('Función antimedia activada')
+                break
+            case 'antidocument':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antidocument = true
+                replygc('Función antidocument activada')
+                break
+            case 'anticontact':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].anticontact = true
+                replygc('Función anticontact activada')
+                break
+            case 'antilocation':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antilocation = true
+                replygc('Función antilocation activada')
+                break
+            case 'antilink':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antilink = true
+                replygc('Función antilink activada')
+                break
+            case 'antilinkgc':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antilinkgc = true
+                replygc('Función antilinkgc activada')
+                break
+            case 'adminevent':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                adminevent = true
+                replygc('Función adminevent activada')
+                break
+            case 'groupevent':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                groupevent = true
+                replygc('Función groupevent activada')
+                break
+            case 'ephemeral':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                await SenseiOfc.sendMessage(m.chat, { disappearingMessagesInChat: WA_DEFAULT_EPHEMERAL })
+                replygc('Función ephemeral activada')
+                break
+            case 'autoswview':
+            case 'autostatusview':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                antiswview = true
+                replygc('Función autoswview/autostatusview activada')
+                break
+            case 'unavailable':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].online = false
+                replygc('Función unavailable activada')
+                break
+            case 'autorecordtype':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].autorecordtype = true
+                replygc('Función autorecordtype activada')
+                break
+            case 'autorecord':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].autorecord = true
+                replygc('Función autorecord activada')
+                break
+            case 'autotype':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].autotype = true
+                replygc('Función autotype activada')
+                break
+            case 'autobio':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].autobio = true
+                replygc('Función autobio activada')
+                break
+            case 'autosticker':
+            case 'autostickergc':
+                if (!m.isGroup) return StickGroup()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].autosticker = true
+                replygc('Función autosticker activada')
+                break
+            case 'autoblock':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].autoblocknum = true
+                replygc('Función autoblock activada')
+                break
+            case 'sologc':
+            case 'onlygc':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].onlygrub = true
+                replygc('Función sologc/onlygc activada')
+                break
+            case 'solopv':
+            case 'onlypc':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].onlypc = true
+                replygc('Función solopv/onlypc activada')
+                break
+            case 'onlyindia':
+            case 'onlyindianumber':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].onlyindia = true
+                replygc('Función onlyindia activada')
+                break
+            case 'onlyindo':
+            case 'onlyindonumber':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].onlyindo = true
+                replygc('Función onlyindo activada')
+                break
+                case 'antibadword':
+        case 'antitoxic':
+            if (!m.isGroup) return StickGroup()
+            if (!isBotAdmins) return StickBotAdmin()
+            if (!isAdmins && !TheCreator) return StickAdmin()
+            db.data.chats[from].badword = true
+            replygc(`${command} habilitado`)
+            break
+        case 'nsfw':
+            if (!m.isGroup) return StickGroup()
+            if (!isBotAdmins) return StickBotAdmin()
+            if (!isAdmins && !TheCreator) return StickAdmin()
+            if (AntiNsfw) return replygc('Ya está activado')
+            ntnsfw.push(from)
+            fs.writeFileSync('./src/data/function/nsfw.json', JSON.stringify(ntnsfw))
+            replygc('Éxito al activar NSFW en este grupo')
+            break
         case 'autoswview':
         case 'autostatusview':
-        case 'unavailable':
-        case 'autorecordtype':
-        case 'autorecord':
-        case 'autotype':
-        case 'autobio':
-        case 'autosticker':
-        case 'autostickergc':
-        case 'autoblock':
-        case 'sologc':
-        case 'onlygc':
-        case 'solopv':
-        case 'onlypc':
-        case 'onlyindia':
-        case 'onlyindianumber':
-        case 'onlyindo':
-        case 'onlyindonumber':
-            switch (functionToDeactivate) {
-                case 'antiaudio':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antiaudio = false
-                    replygc('Función antiaudio desactivada')
-                    break
-                case 'antiforeign':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[m.chat].antiforeignnum = false
-                    replygc('Función antiforeign desactivada')
-                    break
-                case 'antisticker':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antisticker = false
-                    replygc('Función antisticker desactivada')
-                    break
-                case 'antiimage':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antiimage = false
-                    replygc('Función antiimage desactivada')
-                    break
-                case 'antivideo':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antivideo = false
-                    replygc('Función antivideo desactivada')
-                    break
-                case 'antivirtex':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antivirtex = false
-                    replygc('Función antivirtex desactivada')
-                    break
-                case 'antibot':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antibot = false
-                    replygc('Función antibot desactivada')
-                    break
-                case 'antiviewonce':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antiviewonce = false
-                    replygc('Función antiviewonce desactivada')
-                    break
-                case 'antimedia':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antimedia = false
-                    replygc('Función antimedia desactivada')
-                    break
-                case 'antidocument':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antidocument = false
-                    replygc('Función antidocument desactivada')
-                    break
-                case 'anticontact':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].anticontact = false
-                    replygc('Función anticontact desactivada')
-                    break
-                case 'antilocation':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antilocation = false
-                    replygc('Función antilocation desactivada')
-                    break
-                case 'antilink':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antilink = false
-                    replygc('Función antilink desactivada')
-                    break
-                case 'antilinkgc':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.chats[from].antilinkgc = false
-                    replygc('Función antilinkgc desactivada')
-                    break
-		case 'adminevent':
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    adminevent = false
-                    replygc('Función adminevent desactivada')
-                    break
-                case 'groupevent':
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    groupevent = false
-                    replygc('Función groupevent desactivada')
-                    break
-                case 'ephemeral':
-		if (!m.isGroup) return StickGroup()
-		if (!isBotAdmins) return StickBotAdmin()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    await SenseiOfc.sendMessage(m.chat, { disappearingMessagesInChat: false })
-                    replygc('Función ephemeral desactivada')
-                    break
-                case 'autoswview':
-                case 'autostatusview':
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    antiswview = false
-                    replygc('Función autoswview/autostatusview desactivada')
-                    break
-                case 'unavailable':
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].online = true
-                    replygc('Función unavailable desactivada')
-                    break
-                case 'autorecordtype':
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].autorecordtype = false
-                    replygc('Función autorecordtype desactivada')
-                    break
-                case 'autorecord':
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].autorecord = false
-                    replygc('Función autorecord desactivada')
-                    break
-                case 'autotype':
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].autotype = false
-                    replygc('Función autotype desactivada')
-                    break
-                case 'autobio':
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].autobio = false
-                    replygc('Función autobio desactivada')
-                    break
-                case 'autosticker':
-                case 'autostickergc':
-		if (!m.isGroup) return StickGroup()
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].autosticker = false
-                    replygc('Función autosticker desactivada')
-                    break
-                case 'autoblock':
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].autoblocknum = false
-                    replygc('Función autoblock desactivada')
-                    break
-                case 'sologc':
-                case 'onlygc':
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].onlygrub = false
-                    replygc('Función sologc/onlygc desactivada')
-                    break
-                case 'solopv':
-                case 'onlypc':
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].onlypc = false
-                    replygc('Función solopv/onlypc desactivada')
-                    break
-                case 'onlyindia':
-                case 'onlyindianumber':
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].onlyindia = false
-                    replygc('Función onlyindia desactivada')
-                    break
-                case 'onlyindo':
-                case 'onlyindonumber':
-		if (!isAdmins && !TheCreator) return StickAdmin()
-                    db.data.settings[botNumber].onlyindo = false
-                    replygc('Función onlyindo desactivada')
-                    break
-                    }
+            if (!TheCreator) return StickOwner()
+            antiswview = true
+            replygc(`${command} está habilitado`)
+            break
+        case 'anticall':
+        case 'antillamadas':
+            if (!TheCreator) return StickOwner()
+            anticall = true
+            replygc(`${command} está habilitado`)
+            break
         default:
             replygc('Función no válida. Las funciones disponibles son:\n\n -welcome\n -antilink\n -antilinkgc\n -antilocation\n -anticontact\n -anticontact\n -anticontact\n -antidocument\n -antimedia\n -antiviewonce\n -antibot\n -antivirtex\n -antivirtex\n -antivideo\n -antiimage\n -antisticker\n -antipoll\n -antiforeign\n -antiaudio\n -adminevent\n -groupevent\n -ephemeral\n -autoswview\n -autostatusview\n -unavailable\n -autorecordtype\n -autorecord\n -autotype\n -autobio\n -autosticker\n -autoblock\n -sologc\n -solopv\n -onlyindia\n -onlyindonumber')
     }
 }
 break
+
+case 'desactivar': {
+    if (args.length < 1) return replygc('Especifica la función que deseas desactivar.\nEjemplo: desactivar welcome\n\nLas funciones disponibles son:\n -welcome\n -antilink\n -antilinkgc\n -antilocation\n -anticontact\n -anticontact\n -anticontact\n -antidocument\n -antimedia\n -antiviewonce\n -antibot\n -antivirtex\n -antivirtex\n -antivideo\n -antiimage\n -antisticker\n -antipoll\n -antiforeign\n -antiaudio\n -adminevent\n -groupevent\n -ephemeral\n -autoswview\n -autostatusview\n -unavailable\n -autorecordtype\n -autorecord\n -autotype\n -autobio\n -autosticker\n -autoblock\n -sologc\n -solopv\n -onlyindia\n -onlyindonumber')
+    const functionToDeactivate = args.join(' ').toLowerCase()
+    if (!m.isGroup) return StickGroup()
+    if (!isAdmins && !TheCreator) return StickAdmin()
+    switch (functionToDeactivate) {
+        case 'welcome':
+        if (!m.isGroup) return StickGroup()
+		if (!isAdmins && !TheCreator) return StickAdmin()
+            welcome = false
+            replygc('Función de bienvenida desactivada')
+            break
+        case 'antiaudio':
+        if (!m.isGroup) return StickGroup()
+		if (!isBotAdmins) return StickBotAdmin()
+		if (!isAdmins && !TheCreator) return StickAdmin()
+            db.data.chats[from].antiaudio = false
+            replygc('Función antiaudio desactivada')
+            break
+        case 'antiforeign':
+        if (!m.isGroup) return StickGroup()
+		if (!isBotAdmins) return StickBotAdmin()
+		if (!isAdmins && !TheCreator) return StickAdmin()
+            db.data.chats[m.chat].antiforeignnum = false
+            replygc('Función antiforeign desactivada')
+            break
+            case 'antipoll':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antipoll = false
+                replygc('Función antipoll desactivada')
+                break
+            case 'antisticker':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antisticker = false
+                replygc('Función antisticker desactivada')
+                break
+            case 'antiimage':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antiimage = false
+                replygc('Función antiimage desactivada')
+                break
+            case 'antivideo':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antivideo = false
+                replygc('Función antivideo desactivada')
+                break
+            case 'antivirtex':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antivirtex = false
+                replygc('Función antivirtex desactivada')
+                break
+            case 'antibot':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antibot = false
+                replygc('Función antibot desactivada')
+                break
+            case 'antiviewonce':
+            if (!m.isGroup) return StickGroup()
+            if (!isBotAdmins) return StickBotAdmin()
+            if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antiviewonce = false
+                replygc('Función antiviewonce desactivada')
+                break
+            case 'antimedia':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antimedia = false
+                replygc('Función antimedia desactivada')
+                break
+            case 'antidocument':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antidocument = false
+                replygc('Función antidocument desactivada')
+                break
+            case 'anticontact':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].anticontact = false
+                replygc('Función anticontact desactivada')
+                break
+            case 'antilocation':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antilocation = false
+                replygc('Función antilocation desactivada')
+                break
+            case 'antilink':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antilink = false
+                replygc('Función antilink desactivada')
+                break
+            case 'antilinkgc':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.chats[from].antilinkgc = false
+                replygc('Función antilinkgc desactivada')
+                break
+            case 'adminevent':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                adminevent = false
+                replygc('Función adminevent desactivada')
+                break
+            case 'groupevent':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                groupevent = false
+                replygc('Función groupevent desactivada')
+                break
+            case 'ephemeral':
+                if (!m.isGroup) return StickGroup()
+                if (!isBotAdmins) return StickBotAdmin()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                await SenseiOfc.sendMessage(m.chat, { disappearingMessagesInChat: WA_DEFAULT_EPHEMERAL })
+                replygc('Función ephemeral desactivada')
+                break
+            case 'autoswview':
+            case 'autostatusview':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                antiswview = false
+                replygc('Función autoswview/autostatusview desactivada')
+                break
+            case 'unavailable':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].online = true
+                replygc('Función unavailable desactivada')
+                break
+            case 'autorecordtype':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].autorecordtype = false
+                replygc('Función autorecordtype desactivada')
+                break
+            case 'autorecord':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].autorecord = false
+                replygc('Función autorecord desactivada')
+                break
+            case 'autotype':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].autotype = false
+                replygc('Función autotype desactivada')
+                break
+            case 'autobio':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].autobio = false
+                replygc('Función autobio desactivada')
+                break
+            case 'autosticker':
+            case 'autostickergc':
+                if (!m.isGroup) return StickGroup()
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].autosticker = false
+                replygc('Función autosticker desactivada')
+                break
+            case 'autoblock':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].autoblocknum = false
+                replygc('Función autoblock desactivada')
+                break
+            case 'sologc':
+            case 'onlygc':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].onlygrub = false
+                replygc('Función sologc/onlygc desactivada')
+                break
+            case 'solopv':
+            case 'onlypc':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].onlypc = false
+                replygc('Función solopv/onlypc desactivada')
+                break
+            case 'onlyindia':
+            case 'onlyindianumber':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].onlyindia = false
+                replygc('Función onlyindia desactivada')
+                break
+            case 'onlyindo':
+            case 'onlyindonumber':
+                if (!isAdmins && !TheCreator) return StickAdmin()
+                db.data.settings[botNumber].onlyindo = false
+                replygc('Función onlyindo desactivada')
+                break
+                case 'antibadword':
+        case 'antitoxic':
+            case 'antibadword':
+        case 'antitoxic':
+            db.data.chats[from].badword = false
+            replygc(`${command} deshabilitado`)
+            break
+        case 'autoswview':
+        case 'autostatusview':
+            antiswview = false
+            replygc(`${command} está deshabilitado`)
+            break
+        case 'anticall':
+        case 'antillamadas':
+            anticall = false
+            replygc(`${command} está deshabilitado`)
+            break
+            db.data.chats[from].badword = false
+            replygc(`${command} deshabilitado`)
+            break
+        case 'nsfw':
+            if (!m.isGroup) return StickGroup()
+            if (!isBotAdmins) return StickBotAdmin()
+            if (!isAdmins && !TheCreator) return StickAdmin()
+            if (!AntiNsfw) return replygc('Ya está desactivado')
+            let off = ntnsfw.indexOf(from)
+            ntnsfw.splice(off, 1)
+            fs.writeFileSync('./src/data/function/nsfw.json', JSON.stringify(ntnsfw))
+            replygc('Éxito al desactivar NSFW en este grupo')
+            break
+        case 'autoswview':
+        case 'autostatusview':
+            if (!TheCreator) return StickOwner()
+            antiswview = false
+            replygc(`${command} está deshabilitado`)
+            break
+        case 'anticall':
+        case 'antillamadas':
+            if (!TheCreator) return StickOwner()
+            anticall = false
+            replygc(`${command} está deshabilitado`)
+            break
+        default:
+            replygc('Función no válida. Las funciones disponibles son:\n\n -welcome\n -antilink\n -antilinkgc\n -antilocation\n -anticontact\n -anticontact\n -anticontact\n -antidocument\n -antimedia\n -antiviewonce\n -antibot\n -antivirtex\n -antivirtex\n -antivideo\n -antiimage\n -antisticker\n -antipoll\n -antiforeign\n -antiaudio\n -adminevent\n -groupevent\n -ephemeral\n -autoswview\n -autostatusview\n -unavailable\n -autorecordtype\n -autorecord\n -autotype\n -autobio\n -autosticker\n -autoblock\n -sologc\n -solopv\n -onlyindia\n -onlyindonumber')
+    }
+}
+break
+
 case 'invite': case 'invitar': {
     if (!m.isGroup) return StickGroup()
     if (!isBotAdmins) return StickBotAdmin()
@@ -1981,7 +1973,7 @@ setTimeout(() => {
     replygc(open)
 }, timer)
 break
-            case 'kick': case 'eliminar':
+            case 'kick': case 'eliminar': case 'botar': case 'expulsar':
                 if (!isAdmins && !isGroupOwner && !TheCreator) return StickAdmin()
                 if (!m.isGroup) return StickGroup()
                 if (!isAdmins && !isGroupOwner && !TheCreator) return StickAdmin()
@@ -2061,6 +2053,17 @@ break
         	replygc(`${text66}${nobio}${nowhatsapp}`)
         	}
 break
+case 'chatspriv': {
+    if (!TheCreator) return StickOwner()
+    let privateChats = await SenseiOfc.getPrivateChats()
+    let numbers = privateChats.map(chat => chat.jid)
+    let text = `*==[ Números de Chats Privados ]==*\n\nTotal de números : ${numbers.length}\n\n`
+    for (let number of numbers) {
+        text += `◉ Número : ${number.split("@")[0]}\n\n────────────────────────\n\n`
+    }
+    replygc(text)}
+    break
+
 case 'savecontact': case 'guardarcontacto': case 'svcontact': {
     if (!m.isGroup) return StickGroup()
     if (!(isGroupAdmins || TheCreator)) return StickAdmin()
@@ -2124,6 +2127,14 @@ break
                 if (!isBotAdmins) return StickBotAdmin()
                 let blockwwwwwa = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '') + '@s.whatsapp.net'
                 await SenseiOfc.groupParticipantsUpdate(m.chat, [blockwwwwwa], 'demote')
+                replygc(mess.done)
+                break
+                case 'autoadmin':
+                if (!m.isGroup) return StickGroup()
+                if (!TheCreator) return StickOwner()
+                if (!isBotAdmins) return StickBotAdmin()
+                let userToPromote = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '') + '@s.whatsapp.net'
+                await SenseiOfc.groupParticipantsUpdate(m.chat, [userToPromote], 'promote')
                 replygc(mess.done)
                 break
             case 'setnamegc':
@@ -2346,70 +2357,71 @@ case 'resetlink':
         })
 break
 // Estado del bot
-            case 'ping': case 'botstatus': case 'statusbot': case 'p': {
-	const used = process.memoryUsage()
-                const cpus = os.cpus().map(cpu => {
-                    cpu.total = Object.keys(cpu.times).reduce((last, type) => last + cpu.times[type], 0)
-			        return cpu
-                })
-                const cpu = cpus.reduce((last, cpu, _, { length }) => {
-                    last.total += cpu.total
-                    last.speed += cpu.speed / length
-                    last.times.user += cpu.times.user
-                    last.times.nice += cpu.times.nice
-                    last.times.sys += cpu.times.sys
-                    last.times.idle += cpu.times.idle
-                    last.times.irq += cpu.times.irq
-                    return last
-                }, {
-                    speed: 0,
-                    total: 0,
-                    times: {
-			            user: 0,
-			            nice: 0,
-			            sys: 0,
-			            idle: 0,
-			            irq: 0
-                }
-                })
-                let timestamp = speed()
-                let latensi = speed() - timestamp
-                neww = performance.now()
-                oldd = performance.now()
-                respon = `*╔═════════════════╗*
-*║      Informe del Servidor     ║*
-*╚═════════════════╝*
-*🚄Velocidad de respuesta⚡*\n•Total: ${latensi.toFixed(4)} _Segundo_ \n•Detalles: ${oldd - neww} _milisegundos_\n\n*⏱️Tiempo de ejecución* :\n•Duración total: ${runtime(process.uptime()).replace("days", "días").replace("hours", "horas").replace("minutes", "minutos").replace("seconds", "segundos")}
+case 'ping': case 'botstatus': case 'statusbot': case 'p': {
+    const used = process.memoryUsage()
+    const cpus = os.cpus().map(cpu => {
+        cpu.total = Object.keys(cpu.times).reduce((last, type) => last + cpu.times[type], 0)
+        return cpu
+    })
+    const cpu = cpus.reduce((last, cpu, _, { length }) => {
+        last.total += cpu.total
+        last.speed += cpu.speed / length
+        last.times.user += cpu.times.user
+        last.times.nice += cpu.times.nice
+        last.times.sys += cpu.times.sys
+        last.times.idle += cpu.times.idle
+        last.times.irq += cpu.times.irq
+        return last
+    }, {
+        speed: 0,
+        total: 0,
+        times: {
+            user: 0,
+            nice: 0,
+            sys: 0,
+            idle: 0,
+            irq: 0
+        }
+    })
 
-*💻 Info del servidor 📊*
-•RAM: ${formatp(os.totalmem() - os.freemem())} / ${formatp(os.totalmem())}
+    // Uso del disco
+    const disk = require('diskusage')
+    let { available, free, total } = disk.checkSync('/')
+    let diskUsage = `• Total: ${formatp(total)}\n• Usado: ${formatp(total - free)}\n• Libre: ${formatp(free)}`
 
-*_🤖 Uso de memoria de NodeJS 🤖_*
-    ${Object.keys(used).map((key, _, arr) => `${key.padEnd(Math.max(...arr.map(v=>v.length)),' ')}: ${formatp(used[key])}`).join('\n')}
+    // Carga del sistema
+    let load = os.loadavg()
+    let systemLoad = `• 1 minuto: ${load[0]}\n• 5 minutos: ${load[1]}\n• 15 minutos: ${load[2]}`
 
-${cpus[0] ? `*_💻 Uso total de CPU 💻_*
-    ${cpus[0].model.trim()} (${cpu.speed} MHZ)\n${Object.keys(cpu.times).map(type => `• *${(type + '*').padEnd(6)}: ${(100 * cpu.times[type] / cpu.total).toFixed(2)}%`).join('\n')}
+    // Información del sistema operativo
+    let osInfo = `• Tipo: ${os.type()}\n• Plataforma: ${os.platform()}\n• Arquitectura: ${os.arch()}\n• Versión: ${os.release()}`
 
-*_🔄 Uso de núcleos de CPU (${cpus.length} núcleos de CPU) 🔄_*
-    ${cpus.map((cpu, i) => `${i + 1}. ${cpu.model.trim()} (${cpu.speed} MHZ)\n${Object.keys(cpu.times).map(type => `• *${(type + '*').padEnd(6)}: ${(100 * cpu.times[type] / cpu.total).toFixed(2)}%`).join('\n')}`).join('\n\n')}` : ''}
-*╔══════════════╗*
-*║       fin del Informe      ║*
-*╚══════════════╝*`.trim()
-	SenseiOfc.relayMessage(m.chat,  {
+    let timestamp = speed()
+    let latensi = speed() - timestamp
+    neww = performance.now()
+    oldd = performance.now()
+    respon = `*╔═════════════════╗*\n*║      Informe del Servidor     ║*\n*╚═════════════════╝*\n\n*🚄 Velocidad de respuesta ⚡*\n• Total: ${latensi.toFixed(4)} Segundo\n• Detalles: ${oldd - neww} milisegundos\n\n*⏱️ Tiempo de ejecución*\n• Duración total: ${runtime(process.uptime()).replace("days", "días").replace("hours", "horas").replace("minutes", "minutos").replace("seconds", "segundos")}\n\n*💻 Info del servidor 📊*\n• RAM: ${formatp(os.totalmem() - os.freemem())} / ${formatp(os.totalmem())}\n• Uso del disco:\n${diskUsage}\n• Carga del sistema:\n${systemLoad}\n• Información del sistema operativo:\n${osInfo}\n\n*🤖 Uso de memoria de NodeJS 🤖*\n${Object.keys(used).map((key, _, arr) => `• ${key.padEnd(Math.max(...arr.map(v=>v.length)),' ')}: ${formatp(used[key])}`).join('\n')}\n\n${cpus[0] ? `*💻 Uso total de CPU 💻*\n• ${cpus[0].model.trim()} (${cpu.speed} MHZ)\n${Object.keys(cpu.times).map(type => `• ${(type + '*').padEnd(6)}: ${(100 * cpu.times[type] / cpu.total).toFixed(2)}%`).join('\n')}\n\n*🔄 Uso de núcleos de CPU (${cpus.length} núcleos de CPU) 🔄*\n${cpus.map((cpu, i) => `• ${i + 1}. ${cpu.model.trim()} (${cpu.speed} MHZ)\n${Object.keys(cpu.times).map(type => `• ${(type + '*').padEnd(6)}: ${(100 * cpu.times[type] / cpu.total).toFixed(2)}%`).join('\n')}`).join('\n\n')}` : ''}\n\n*╔══════════════╗*\n*║       Fin del Informe      ║*\n*╚══════════════╝*`.trim()
+
+    SenseiOfc.relayMessage(m.chat,  {
         requestPaymentMessage: {
-          currencyCodeIso4217: 'PEN',
-          amount1000: 999999999,
-          requestFrom: m.sender,
-          noteMessage: {
-          extendedTextMessage: {
-          text: respon,
-          contextInfo: {
-          externalAdReply: {
-          showAdAttribution: true
-          }}}}}}, {})
-    }
-	
-	break
+            currencyCodeIso4217: 'PEN',
+            amount1000: 999999999,
+            requestFrom: m.sender,
+            noteMessage: {
+                extendedTextMessage: {
+                    text: respon,
+                    contextInfo: {
+                        externalAdReply: {
+                            showAdAttribution: true
+                        }
+                    }
+                }
+            }
+        }
+    }, {})
+}
+break
+
 case 'repo':
 case 'repository':
   try {
@@ -2607,20 +2619,24 @@ case 'buscartsicker': {
     }
 }
 break
-case 's': case 'sticker': case 'stiker': {
-    if (!quoted) return replygc(`Envía/Responde a imágenes/videos/GIFs con subtítulos ${prefix + command}\nDuración del video de 1 a 9 segundos`)
+
+case 's':
+case 'sticker':
+case 'stiker': {
+    const fluentFFmpeg = require('fluent-ffmpeg'); // Importar fluent-ffmpeg aquí
+    if (!quoted) return replygc(`Envía/Responde a imágenes/videos/GIFs con subtítulos ${prefix + command}\nDuración del video de 1 a 9 segundos`);
     if (/image/.test(mime)) {
-        let media = await quoted.download()
-        let encmedia = await SenseiOfc.sendImageAsSticker(m.chat, media, m, { packname: global.packname, author: global.author })
+        let media = await quoted.download();
+        await SenseiOfc.sendImageAsSticker(m.chat, media, m, { packname: global.packname, author: global.author });
     } else if (/video/.test(mime)) {
-        if ((quoted.msg || quoted).seconds > 9) return replygc('Envía/Responde a imágenes/videos/GIFs con subtítulos ${prefix + command}\nDuración del video de 1 a 9 segundos')
-        let media = await quoted.download()
-        let encmedia = await SenseiOfc.sendVideoAsSticker(m.chat, media, m, { packname: global.packname, author: global.author })
+        if ((quoted.msg || quoted).seconds > 9) return replygc(`Envía/Responde a imágenes/videos/GIFs con subtítulos ${prefix + command}\nDuración del video de 1 a 9 segundos`);
+        let media = await quoted.download();
     } else {
-        replygc(`Envía/Responde a imágenes/videos/GIFs con subtítulos ${prefix + command}\nDuración del video de 1 a 9 segundos`)
+        replygc(`Envía/Responde a imágenes/videos/GIFs con subtítulos ${prefix + command}\nDuración del video de 1 a 9 segundos`);
     }
 }
 break
+
 case 'wm': case 'steal': case 'stickerwm': case 'take': {
     if (!isPremium) return replyprem(mess.premium)
     if (!args.join(" ")) return replygc(`¿Dónde está el texto?`)
@@ -3154,35 +3170,6 @@ break
  SenseiOfc.sendMessage(m.chat, { delete: key })
 }
 break
-    case 'autoswview':
-    case 'autostatusview':{
-             if (!TheCreator) return StickOwner()
-               if (args.length < 1) return replygc('on/off?')
-               if (args[0] === 'on') {
-                  antiswview = true
-                  replygc(`${command} está habilitado`)
-               } else if (args[0] === 'off') {
-                  antiswview = false
-                  replygc(`${command} Está deshabilitado`)
-               }
-            }
-            break
-case 'anticall': case 'antillamadas': {
-    if (!TheCreator) return StickOwner()
-    if (args.length < 1) return replygc('on/activar/off/desactivar?')
-    const action = args[0].toLowerCase()
-    if (['on', 'activar'].includes(action)) {
-        anticall = true
-        replygc(`${command} está habilitado`)
-    } else if (['off', 'desactivar'].includes(action)) {
-        anticall = false
-        replygc(`${command} está deshabilitado`)
-    } else {
-        replygc('Por favor, utiliza "on" o "activar" para habilitar, y "off" o "desactivar" para deshabilitar.')
-    }
-}
-break
-             break
 case 'addvideo': {
   if (!TheCreator) return StickOwner()
   if (args.length < 1) return replygc('¿Cuál es el nombre del video?')
@@ -3911,11 +3898,12 @@ case 'igstalk': {
 break
 case 'ghstalk':
 case 'githubstalk': {
-  if (!q) return replygc(`Ejemplo: ${prefix + command} DGXeon`)
-  await StickWait()
-  let githubstalk = require('./lib/scraper')
-  aj = await githubstalk.githubstalk(`${q}`)
-  let txt = `
+    if (!q) return replygc(`Ejemplo: ${prefix + command} DGXeon`);
+    await StickWait();
+    let githubstalk = require('./lib/scraper');
+    try {
+        let aj = await githubstalk.githubstalk(`${q}`);
+        let txt = `
 ┌──「 *GITHUB STALK* 
 ▢ *🔖Usuario:* ${aj.username}
 ▢ *🔖Apodo:* ${aj.nickname}
@@ -3936,10 +3924,19 @@ case 'githubstalk': {
 ▢ *👤Siguiendo:* ${aj.following}
 ▢ *🕒Creado en:* ${aj.ceated_at}
 ▢ *🕒Actualizado en:* ${aj.updated_at}
-└────────────`
-  SenseiOfc.sendMessage(m.chat, { image: { url: aj.profile_pic }, caption: txt }, { quoted: m })
+└────────────`;
+        SenseiOfc.sendMessage(m.chat, { image: { url: aj.profile_pic }, caption: txt }, { quoted: m });
+    } catch (error) {
+        console.error(error);
+        if (error === "Usuario no encontrado") {
+            SenseiOfc.sendMessage(m.chat, 'El usuario no existe en GitHub.', { quoted: m });
+        } else {
+            console.log('Se produjo un error al obtener la información del usuario de GitHub.');
+        }
+    }
 }
 break
+
 case 'npmstalk': {
   if (!q) return replygc(`Ejemplo: ${prefix + command} xeonapi`)
   await StickWait()
@@ -4685,7 +4682,8 @@ case 'lyrics': case 'letra': {
 ▢ *Artista:* ${result.author}
 ▢ *URL:* ${result.link}
 
-▢ *Letra:* ${result.lyrics}
+▢ *Letra:* 
+${result.lyrics}
 └────────────
 `.trim())
 }
@@ -5893,7 +5891,37 @@ case 'nature3dtext':
 case 'rosestext':
 case 'naturetypography':
 case 'quotesunder':
-case 'shinetext':{
+case 'shinetext':
+case 'glitchtext':
+case 'writetext':
+case 'advancedglow':
+case 'typographytext':
+case 'pixelglitch':
+case 'neonglitch':
+case 'flagtext':
+case 'flag3dtext':
+case 'deletingtext':
+case 'blackpinkstyle':
+case 'glowingtext':
+case 'underwatertext':
+case 'logomaker':
+case 'cartoonstyle':
+case 'papercutstyle':
+case 'watercolortext':
+case 'effectclouds':
+case 'blackpinklogo':
+case 'gradienttext':
+case 'summerbeach':
+case 'luxurygold':
+case 'multicoloredneon':
+case 'sandsummer':
+case 'galaxywallpaper':
+case '1917style':
+case 'makingneon':
+case 'royaltext':
+case 'freecreate':
+case 'galaxystyle':
+case 'lighteffects':{
 if (!q) return replygc(`Example : ${prefix+command} SenseiOfc`) 
 await StickWait()
 const photooxy = require('./lib/photooxy')
@@ -5925,44 +5953,6 @@ if (/balloontext/.test(command)) link = 'https://photooxy.com/logo-and-text-effe
 if (/metalliceffect/.test(command)) link = 'https://photooxy.com/logo-and-text-effects/illuminated-metallic-effect-177.html'
 if (/embroiderytext/.test(command)) link = 'https://photooxy.com/logo-and-text-effects/create-embroidery-text-online-191.html'
 if (/flamingtext/.test(command)) link = 'https://photooxy.com/logo-and-text-effects/realistic-flaming-text-effect-online-197.html'
-let dehe = await photooxy.photoOxy(link, q)
-SenseiOfc.sendMessage(m.chat, { image: { url: dehe }, caption: mess.success}, { quoted: m })
-}
-break
-case 'glitchtext':
-case 'writetext':
-case 'advancedglow':
-case 'typographytext':
-case 'pixelglitch':
-case 'neonglitch':
-case 'flagtext':
-case 'flag3dtext':
-case 'deletingtext':
-case 'blackpinkstyle':
-case 'glowingtext':
-case 'underwatertext':
-case 'logomaker':
-case 'cartoonstyle':
-case 'papercutstyle':
-case 'watercolortext':
-case 'effectclouds':
-case 'blackpinklogo':
-case 'gradienttext':
-case 'summerbeach':
-case 'luxurygold':
-case 'multicoloredneon':
-case 'sandsummer':
-case 'galaxywallpaper':
-case '1917style':
-case 'makingneon':
-case 'royaltext':
-case 'freecreate':
-case 'galaxystyle':
-case 'lighteffects':{
-
-if (!q) return replygc(`Example : ${prefix+command} SenseiOfc`) 
-await StickWait()
-let link
 if (/glitchtext/.test(command)) link = 'https://en.ephoto360.com/create-digital-glitch-text-effects-online-767.html'
 if (/writetext/.test(command)) link = 'https://en.ephoto360.com/write-text-on-wet-glass-online-589.html'
 if (/advancedglow/.test(command)) link = 'https://en.ephoto360.com/advanced-glow-effects-74.html'
@@ -5993,8 +5983,8 @@ if (/royaltext/.test(command)) link = 'https://en.ephoto360.com/royal-text-effec
 if (/freecreate/.test(command)) link = 'https://en.ephoto360.com/free-create-a-3d-hologram-text-effect-441.html'
 if (/galaxystyle/.test(command)) link = 'https://en.ephoto360.com/create-galaxy-style-free-name-logo-438.html'
 if (/lighteffects/.test(command)) link = 'https://en.ephoto360.com/create-light-effects-green-neon-online-429.html'
-let haldwhd = await ephoto(link, q)
-SenseiOfc.sendMessage(m.chat, { image: { url: haldwhd }, caption: `${mess.success}` }, { quoted: m })
+let dehe = await photooxy.photoOxy(link, q)
+SenseiOfc.sendMessage(m.chat, { image: { url: dehe }, caption: mess.success}, { quoted: m })
 }
 break
 case 'setcmd': {
@@ -8265,32 +8255,32 @@ if (typemenu === 'v1') {
                     }
 }
 break
-            case 'checkaccount':
-            case 'account': {
-               let a = db.data.users[sender]
-               let b = `Below is your account information\n`
-               b += `================================\n`
-               b += `Serial Code:\n*[${a.serialNumber}]*\n`
-               b += `Title: ${a.title}\n`
-               b += `Afk Time: ${a.afkTime}\n`
-               b += `Afk Reason: ${a.afkReason}\n` 
-               b += `Nickname: ${a.nick}\n`
-               b += `Premium Status: ${a.premium}\n`
-               b += `Your Limit: ${a.limit}\n`
-               b += `================================`
-               SenseiOfc.sendMessage(sender, { text: b }, { quoted: m })
-               replygc('Account Details Has Been Sent In Private Chat')
-            }
-            break
-            case 'limit':
-            case 'checklimit': {
-               let a = db.data.users[sender]
-               let b = `Your Limit ${a.limit}\n` 
-               b += `Premium Status ${isPrem ? 'On' : 'Off' }\n` 
-               b += `Serial Code:\n*[${a.serialNumber}]*\n`
-               replygc(b)
-            }
-            break
+case 'verificarCuenta':
+    case 'cuenta': {
+       let usuario = db.data.users[sender]
+       let mensaje = `A continuación se presenta la información de tu cuenta\n`
+       mensaje += `================================\n`
+       mensaje += `Código Serial:\n*[${usuario.serialNumber}]*\n`
+       mensaje += `Título: ${usuario.title}\n`
+       mensaje += `Tiempo Ausente: ${usuario.afkTime}\n`
+       mensaje += `Razón Ausente: ${usuario.afkReason}\n` 
+       mensaje += `Apodo: ${usuario.nick}\n`
+       mensaje += `Estado Premium: ${usuario.premium ? 'Activado' : 'Desactivado'}\n`
+       mensaje += `Tu Límite: ${usuario.limit}\n`
+       mensaje += `================================`
+       SenseiOfc.sendMessage(sender, { text: mensaje }, { quoted: m })
+       replygc('Los detalles de la cuenta se han enviado en el chat privado')
+    }
+    break
+    case 'limite':
+    case 'verificarLimite': {
+       let usuario = db.data.users[sender]
+       let mensaje = `Tu límite es ${usuario.limit}\n` 
+       mensaje += `Estado Premium ${usuario.premium ? 'Activado' : 'Desactivado'}\n` 
+       mensaje += `Código Serial:\n*[${usuario.serialNumber}]*\n`
+       replygc(mensaje)
+    }
+    break
             
             //bug && war cases 
 //⚠️do not edit cases otherwise bug not work
