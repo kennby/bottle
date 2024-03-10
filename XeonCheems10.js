@@ -1125,38 +1125,24 @@ case 'reportbug': {
 }
 break
 case 'update':
-    case 'actualizar':
-        try {
-          const stdout = execSync('git pull' + (m.fromMe && text ? ' ' + text : ''));
-          let messager = stdout.toString();
-          if (messager.includes('Already up to date.')) messager = '✅ *No hay actualizaciones pendientes*';
-          if (messager.includes('Updating')) messager = '✅ *Actualización finalizada exitosamente*\n\n' + stdout.toString();
-          replygc(m.chat, messager, m);
-        } catch(error) { 
-          try {
-            const status = execSync('git status --porcelain');
-            if (status.length > 0) {
-              const conflictedFiles = status.toString().split('\n').filter(line => line.trim() !== '').map(line => {
-                if (line.includes('.npm/') || line.includes('.cache/') || line.includes('tmp/') || line.includes('sessions/') || line.includes('npm-debug.log')) {
-                  return null;
-                }
-                return '*→ ' + line.slice(3) + '*';
-              }).filter(Boolean);
-              if (conflictedFiles.length > 0) {
-                const errorMessage = `🚩 *Se han hecho cambios locales en archivos del bot que entran en conflicto con las actualizaciones del repositorio. Para actualizar, reinstala el bot o realiza las actualizaciones manualmente*\n\nArchivos en conflicto:\n\n${conflictedFiles.join('\n')}`;
-                await replygc(m.chat, errorMessage, m);
-              }
-            }
-          } catch (error) {
-            console.error(error);
-            let errorMessage2 = '🚩 *Ocurrió un fallo. Por favor, inténtalo de nuevo más tarde*';
-            if (error.message) {
-              errorMessage2 += '\n*- Mensaje de error:* ' + error.message;
-            }
-            await replygc(m.chat, errorMessage2, m);
-          }
+case 'actualizar':
+    try {
+        execSync('git checkout -- .');
+        const stdout = execSync('git pull' + (m.fromMe && text ? ' ' + text : ''));
+        if (stdout.toString().includes('Already up to date.')) {
+            replygc(m.chat, '✅ *No hay actualizaciones pendientes*', m);
+        } else if (stdout.toString().includes('Updating')) {
+            replygc(m.chat, '✅ *Actualización finalizada exitosamente*\n\n' + stdout.toString(), m);
         }
-      break      
+    } catch(error) { 
+        console.error(error);
+        let errorMessage2 = '🚩 *Ocurrió un fallo. Por favor, inténtalo de nuevo más tarde*';
+        if (error.message) {
+            errorMessage2 += '\n*- Mensaje de error:* ' + error.message;
+        }
+        await replygc(m.chat, errorMessage2, m);
+    }
+break
 case 'reiniciar': case 'actualizar':
     if (!TheCreator) return StickOwner()
     replygc(`El reinicio se completará en segundos`);
