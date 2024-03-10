@@ -2353,13 +2353,31 @@ case 'linkgc':
 case 'gclink':
 case 'grouplink':
 case 'gruplink':
-    if (!m.isGroup) return StickGroup()
-    if (!isAdmins && !isGroupOwner && !TheCreator) return StickAdmin()
-    if (!isBotAdmins) return StickBotAdmin()
-    let response = await SenseiOfc.groupInviteCode(m.chat)
-    SenseiOfc.sendText(m.chat, `👥 *ENLACE DEL GRUPO*\n📛 *Nombre :* ${groupMetadata.subject}\n👤 *Dueño del Grupo :* ${groupMetadata.owner !== undefined ? '+'+ groupMetadata.owner.split`@`[0] : 'No conocido'}\n🌱 *ID :* ${groupMetadata.id}\n🔗 *Enlace del Chat :* https://chat.whatsapp.com/${response}\n👥 *Miembros :* ${groupMetadata.participants.length}\n`, m, {
-        detectLink: true
-    })
+    if (!m.isGroup) return StickGroup();
+    if (!isAdmins && !isGroupOwner && !TheCreator) return StickAdmin();
+    if (!isBotAdmins) return StickBotAdmin();
+
+    try {
+        let response = await SenseiOfc.groupInviteCode(m.chat);
+        let groupMetadata = await SenseiOfc.groupMetadata(m.chat);
+
+        let owner = groupMetadata.owner !== undefined ? '+' + groupMetadata.owner.split`@`[0] : 'No conocido';
+        let memberCount = groupMetadata.participants.length;
+
+        let message = `
+👥 *ENLACE DEL GRUPO*
+📛 *Nombre:* ${groupMetadata.subject}
+👤 *Dueño del Grupo:* ${owner}
+🌱 *ID:* ${groupMetadata.id}
+🔗 *Enlace del Chat:* https://chat.whatsapp.com/${response}
+👥 *Miembros:* ${memberCount}
+        `;
+
+        SenseiOfc.sendText(m.chat, message, m, { detectLink: true });
+    } catch (error) {
+        console.error(error);
+        await replygc(m.chat, 'Ocurrió un error al obtener el enlace del grupo. Por favor, inténtalo de nuevo más tarde.', m);
+    }
 break
            case 'getbio':
     try {
