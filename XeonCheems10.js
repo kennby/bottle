@@ -873,19 +873,23 @@ async function translateToSpanish(text) { const response = await axios.get(`http
     }
 }
 break
-case 'setmediamenu': {
+  case 'setmediamenu': {
     if (!TheCreator) return StickOwner()
-    let delb = await SenseiOfc.downloadAndSaveMediaMessage(quoted)
-    if (quoted.mimetype.startsWith('image/')) {
-        await fsx.copy(delb, './Media/theme/menu.jpg')
-    } else if (quoted.mimetype.startsWith('video/')) {
-        await fsx.copy(delb, './Media/theme/Cheems-bot.mp4')
-    } else {
-        replygc('Por favor, envía una imagen o un video.')
+    if (!quoted) {
+        replygc('Por favor, envía un mensaje multimedia (imagen o video).')
         return
     }
+    let delb = await SenseiOfc.downloadAndSaveMediaMessage(quoted)
+    if (quoted.mimetype && quoted.mimetype.startsWith('image/')) {
+        await fsx.copy(delb, './Media/theme/menu.jpg')
+        replygc('La imagen se ha subido con éxito a ./Media/theme/menu.jpg')
+    } else if (quoted.mimetype && quoted.mimetype.startsWith('video/')) {
+        await fsx.copy(delb, './Media/theme/Cheems-bot.mp4')
+        replygc('El video se ha subido con éxito a ./Media/theme/Cheems-bot.mp4')
+    } else {
+        replygc('Por favor, envía una imagen o un video.')
+    }
     fs.unlinkSync(delb)
-    replygc(mess.done)
 }
 break
 case 'addtitle': {
