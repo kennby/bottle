@@ -873,23 +873,23 @@ async function translateToSpanish(text) { const response = await axios.get(`http
     }
 }
 break
-  case 'setmediamenu': {
+case 'setmediamenu': {
     if (!TheCreator) return StickOwner()
     if (!quoted) {
-        replygc('Por favor, envía un mensaje multimedia (imagen o video).')
+        replygc('Por favor, responde a un mensaje que contenga una imagen o un video para establecer como menú.')
         return
     }
     let delb = await SenseiOfc.downloadAndSaveMediaMessage(quoted)
-    if (quoted.mimetype && quoted.mimetype.startsWith('image/')) {
+    if (quoted.mimetype.startsWith('image/')) {
         await fsx.copy(delb, './Media/theme/menu.jpg')
-        replygc('La imagen se ha subido con éxito a ./Media/theme/menu.jpg')
-    } else if (quoted.mimetype && quoted.mimetype.startsWith('video/')) {
+    } else if (quoted.mimetype.startsWith('video/')) {
         await fsx.copy(delb, './Media/theme/Cheems-bot.mp4')
-        replygc('El video se ha subido con éxito a ./Media/theme/Cheems-bot.mp4')
     } else {
         replygc('Por favor, envía una imagen o un video.')
+        return
     }
     fs.unlinkSync(delb)
+    replygc(mess.done)
 }
 break
 case 'addtitle': {
@@ -961,37 +961,35 @@ case 'delprem':
         replygc("Eliminación exitosa")
     }
     break
-case 'buypremium':
-    if (args.length < 1 || isNaN(args[0])) return replygc(`Uso: ${prefix + command} límites\n\nEjemplo: ${prefix + command} 50`);
-    let limitsNeeded = parseInt(args[0]); 
-    let premiumDuration = 1; 
-    let premiumCost = 2; 
-    if (limitsNeeded < premiumCost) return replygc(`Necesitas al menos ${premiumCost} límites para comprar premium.`);
-    let currentLimits = db.data.users[sender]?.limit || 0;
-    if (currentLimits < limitsNeeded) return replygc(`No tienes suficientes límites para comprar premium.`);
-    db.data.users[sender].premium = true; 
-    db.data.users[sender].premiumExpired = Date.now() + (premiumDuration * 24 * 60 * 60 * 1000); 
-    db.data.users[sender].limit -= limitsNeeded;
-    await replygc(`¡Premium comprado con éxito! Duración: ${premiumDuration} día(s)`);
-break
-    case 'listprem': {
-        if (!TheCreator) return StickOwner()
-        let data = require('./src/data/role/premium.json')
-        let txt = `*------「 LIST PREMIUM 」------*\n\n`
-        let mentions = []
-        for (let x of data) {
-            txt += `User: @${x.id.split('@')[0]}\n`
-            txt += `Expire In: ${x.expired} ms\n`
-            mentions.push(x.id)
-        }
-        SenseiOfc.sendMessage(m.chat, {
-            text: txt,
-            mentions: mentions
-        }, {
-            quoted: m
-        })
-    }    
-        break
+    case 'buypremium':
+        if (args.length < 1)
+            return replygc(`Uso: ${prefix + command} límites\n\nEjemplo: ${prefix + command} 50`)
+        let days = Math.floor(args[0] / 50)
+        if (db.data.users[sender].limit < args[0]) 
+            return replygc("No tienes suficientes límites para comprar premium.")
+        db.data.users[sender].limit -= args[0]
+        addPremiumUser(sender, days + "d", premium)
+        replygc("Premium comprado con éxito, se han añadido " + days + " días de premium.")
+        break    
+        case 'listprem': {
+            if (!TheCreator) return StickOwner()
+            let data = require('./src/data/role/premium.json')
+            let txt = `*------「 LISTA PREMIUM 」------*\n\n`
+            let menciones = []
+            for (let x of data) {
+                let fechaExpiracion = new Date(x.expired)
+                txt += `Usuario: @${x.id.split('@')[0]}\n`
+                txt += `Expira en: ${fechaExpiracion.toLocaleDateString()} ${fechaExpiracion.toLocaleTimeString()}\n`
+                menciones.push(x.id)
+            }
+            SenseiOfc.sendMessage(m.chat, {
+                text: txt,
+                mentions: menciones
+            }, {
+                quoted: m
+            })
+        }    
+        break                
 case 'addowner':
     if (!TheCreator) return StickOwner()
     if (!args[0]) return replygc(`Utiliza ${prefix+command} número\nEjemplo ${prefix+command} ${ownernumber}`)
@@ -1126,6 +1124,39 @@ case 'reportbug': {
     })
 }
 break
+case 'update':
+    case 'actualizar':
+        try {
+          const stdout = execSync('git pull' + (m.fromMe && text ? ' ' + text : ''));
+          let messager = stdout.toString();
+          if (messager.includes('Already up to date.')) messager = '✅ *No hay actualizaciones pendientes*';
+          if (messager.includes('Updating')) messager = '✅ *Actualización finalizada exitosamente*\n\n' + stdout.toString();
+          replygc(m.chat, messager, m);
+        } catch(error) { 
+          try {
+            const status = execSync('git status --porcelain');
+            if (status.length > 0) {
+              const conflictedFiles = status.toString().split('\n').filter(line => line.trim() !== '').map(line => {
+                if (line.includes('.npm/') || line.includes('.cache/') || line.includes('tmp/') || line.includes('sessions/') || line.includes('npm-debug.log')) {
+                  return null;
+                }
+                return '*→ ' + line.slice(3) + '*';
+              }).filter(Boolean);
+              if (conflictedFiles.length > 0) {
+                const errorMessage = `🚩 *Se han hecho cambios locales en archivos del bot que entran en conflicto con las actualizaciones del repositorio. Para actualizar, reinstala el bot o realiza las actualizaciones manualmente*\n\nArchivos en conflicto:\n\n${conflictedFiles.join('\n')}`;
+                await replygc(m.chat, errorMessage, m);
+              }
+            }
+          } catch (error) {
+            console.error(error);
+            let errorMessage2 = '🚩 *Ocurrió un fallo. Por favor, inténtalo de nuevo más tarde*';
+            if (error.message) {
+              errorMessage2 += '\n*- Mensaje de error:* ' + error.message;
+            }
+            await replygc(m.chat, errorMessage2, m);
+          }
+        }
+      break      
 case 'reiniciar': case 'actualizar':
     if (!TheCreator) return StickOwner()
     replygc(`El reinicio se completará en segundos`);
@@ -1233,7 +1264,7 @@ case 'salir':
     break
     case 'comprobar':
         if (!TheCreator) return StickOwner()
-        let minimoIntegrantes = parseInt(text.trim()) // Asume que el mínimo de integrantes se proporciona después del comando
+        let minimoIntegrantes = parseInt(text.trim())
         if (!minimoIntegrantes) {
             replygc('Por favor, proporciona un número después del comando. Por ejemplo: "comprobar 5" hará que el bot salga de los grupos que tienen menos de 5 integrantes.')
             break
@@ -2478,7 +2509,6 @@ case 'repository':
         await replygc(`El repositorio no está disponible actualmente`);
     }
 break
-case 'buypremium':
 case 'premiumuser':
     let teksBuyPremium = `Hola ${pushname}👋\n¿Quieres comprar Premium? Simplemente chatea con el propietario😉`;
     await SenseiOfc.sendMessage(m.chat, {
@@ -2663,17 +2693,22 @@ case 'wm': case 'steal': case 'stickerwm': case 'take': {
 }
 break
 case 'sticker2': case 's2': {
-    if (!isPremium) return replyprem(mess.premium)
-    if (!args[0]) return replygc(`Falta el nombre del paquete. Ejemplo: ${prefix + command} nombre|autor`)
+    if (!args.join(" ")) return replygc(`¿Dónde está el texto?`)
     const swn = args.join(" ")
     const pcknm = swn.split("|")[0]
     const atnm = swn.split("|")[1]
-
-    if (m.quoted && (m.quoted.isImage || m.quoted.isVideo || m.quoted.isAnimated)) {
-        let media = await m.quoted.download()
+    if (m.quoted.isAnimated === true) {
+        SenseiOfc.downloadAndSaveMediaMessage(quoted, "gifee")
+        SenseiOfc.sendMessage(from, { sticker: fs.readFileSync("gifee.webp") }, { quoted: m })
+    } else if (/image/.test(mime)) {
+        let media = await quoted.download()
         let encmedia = await SenseiOfc.sendImageAsSticker(m.chat, media, m, { packname: pcknm, author: atnm })
+    } else if (/video/.test(mime)) {
+        if ((quoted.msg || quoted).seconds > 9) return replygc('¡Máximo 9 segundos!')
+        let media = await quoted.download()
+        let encmedia = await SenseiOfc.sendVideoAsSticker(m.chat, media, m, { packname: pcknm, author: atnm })
     } else {
-        replygc(`Responde a una imagen, video o GIF para convertirlo en sticker`)
+        replygc(`¿Foto o video?`)
     }
 }
 break
