@@ -5992,11 +5992,11 @@ SenseiOfc.sendMessage(m.chat, { image: { url: dehe }, caption: mess.success}, { 
 }
 break
 case 'setcmd': {
-    if (!m.quoted) return replygc('¡Responde a un mensaje!')
-    if (!m.quoted.fileSha256) return replygc('Falta el Hash SHA256')
-    if (!text) return replygc('¿Para qué comando?')
+    if (!m.quoted) return replygc('⚠️ ¡Responde a un mensaje!')
+    if (!m.quoted.fileSha256) return replygc('⚠️ Falta el Hash SHA256')
+    if (!text) return replygc('⚠️ ¿Para qué comando?')
     let hash = m.quoted.fileSha256.toString('base64')
-    if (global.db.data.sticker[hash] && global.db.data.sticker[hash].locked) return replygc('No tienes permiso para cambiar este comando de pegatina')
+    if (global.db.data.sticker[hash] && global.db.data.sticker[hash].locked) return replygc('⛔ No tienes permiso para cambiar este comando de pegatina')
     global.db.data.sticker[hash] = {
         text,
         mentionedJid: m.mentionedJid,
@@ -6004,17 +6004,19 @@ case 'setcmd': {
         at: + new Date,
         locked: false,
     }
-    replygc('¡Hecho!')
+    replygc('✅ ¡Hecho!')
 }
 break
+
 case 'delcmd': {
     let hash = m.quoted.fileSha256.toString('base64')
-    if (!hash) return replygc('Sin hashes')
-    if (global.db.data.sticker[hash] && global.db.data.sticker[hash].locked) return replygc('No tienes permiso para borrar este comando de pegatina')             
+    if (!hash) return replygc('⚠️ Sin hashes')
+    if (global.db.data.sticker[hash] && global.db.data.sticker[hash].locked) return replygc('⛔ No tienes permiso para borrar este comando de pegatina')             
     delete global.db.data.sticker[hash]
-    replygc('¡Hecho!')
+    replygc('✅ ¡Hecho!')
 }
 break
+
 case 'listcmd': {
     let teks = `
 *Lista de Hash*
@@ -6024,14 +6026,15 @@ ${Object.entries(global.db.data.sticker).map(([key, value], index) => `${index +
     SenseiOfc.sendText(m.chat, teks, m, { mentions: Object.values(global.db.data.sticker).map(x => x.mentionedJid).reduce((a,b) => [...a, ...b], []) })
 }
 break
+
 case 'lockcmd': {
     if (!TheCreator) return StickOwner()
-    if (!m.quoted) return replygc('¡Responde a un mensaje!')
-    if (!m.quoted.fileSha256) return replygc('Falta el Hash SHA256')
+    if (!m.quoted) return replygc('⚠️ ¡Responde a un mensaje!')
+    if (!m.quoted.fileSha256) return replygc('⚠️ Falta el Hash SHA256')
     let hash = m.quoted.fileSha256.toString('base64')
-    if (!(hash in global.db.data.sticker)) return replygc('Hash no encontrado en la base de datos')
+    if (!(hash in global.db.data.sticker)) return replygc('⚠️ Hash no encontrado en la base de datos')
     global.db.data.sticker[hash].locked = !/^un/i.test(command)
-    replygc('¡Hecho!')
+    replygc('✅ ¡Hecho!')
 }
 break
 case 'ss': case 'ssweb': {
@@ -6164,7 +6167,7 @@ https://cloud.google.com/translate/docs/languages
     }
 }
 break
-  case 'mediafire': {
+case 'mediafire': {
     if (!args[0]) return replygc(`Ingresa el enlace de MediaFire junto al comando`)
     if (!args[0].match(/mediafire/gi)) return replygc(`Enlace incorrecto`)
     const { mediafiredl } = require('@bochilteam/scraper')
@@ -6173,13 +6176,12 @@ break
     let res = await mediafiredl(args[0])
     let { url, url2, filename, ext, aploud, filesize, filesizeH } = res
     let caption = `
-    ≡ *MEDIAFIRE*
-
+┌──「 **MEDIAFIRE** 」
 ▢ *Número:* ${filename}
 ▢ *Tamaño:* ${filesizeH}
 ▢ *Extensión:* ${ext}
 ▢ *Subido:* ${aploud}
-`.trim()
+└────────────`.trim()
     SenseiOfc.sendMessage(m.chat, { document : { url : url}, fileName : filename, mimetype: ext }, { quoted : m })
 }
 break
