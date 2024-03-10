@@ -1143,7 +1143,7 @@ case 'actualizar':
         await replygc(m.chat, errorMessage2, m);
     }
 break
-case 'reiniciar': case 'actualizar':
+case 'reiniciar':
     if (!TheCreator) return StickOwner()
     replygc(`El reinicio se completará en segundos`);
     await sleep(3000);
