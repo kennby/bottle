@@ -1131,6 +1131,10 @@ case 'consola':
             replygc(m.chat, '🚩 *Comando no válido. Por favor, usa un comando npm.*', m);
             return;
         }
+        if (args.length === 0) {
+            replygc(m.chat, '🚩 *No se proporcionaron argumentos. Aquí tienes un ejemplo de cómo usar el comando:* \n\n npm install <nombre_del_paquete>', m);
+            return;
+        }
         const stdout = execSync(`${npmCommand} ${args.join(' ')}`);
         replygc(m.chat, '✅ *Comando ejecutado exitosamente*\n\n' + stdout.toString(), m);
     } catch(error) { 
