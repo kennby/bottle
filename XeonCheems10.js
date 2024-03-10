@@ -873,22 +873,17 @@ async function translateToSpanish(text) { const response = await axios.get(`http
     }
 }
 break
-case 'setimgmenu':
-case 'sim': {
+case 'setmediamenu': {
     if (!TheCreator) return StickOwner()
     let delb = await SenseiOfc.downloadAndSaveMediaMessage(quoted)
-    await fsx.copy(delb, './Media/theme/menu.jpg')
-    fs.unlinkSync(delb)
-    replygc(mess.done)
-}
-break
-case 'setvidmenu':
-case 'svm':
-case 'setvgifmenu':
-case 'sgm': {
-    if (!TheCreator) return StickOwner()
-    let delb = await SenseiOfc.downloadAndSaveMediaMessage(quoted)
-    await fsx.copy(delb, './Media/theme/Cheems-bot.mp4')
+    if (quoted.mimetype.startsWith('image/')) {
+        await fsx.copy(delb, './Media/theme/menu.jpg')
+    } else if (quoted.mimetype.startsWith('video/')) {
+        await fsx.copy(delb, './Media/theme/Cheems-bot.mp4')
+    } else {
+        replygc('Por favor, envía una imagen o un video.')
+        return
+    }
     fs.unlinkSync(delb)
     replygc(mess.done)
 }
@@ -2063,7 +2058,15 @@ case 'chatspriv': {
     }
     replygc(text)}
     break
-
+    case 'eliminarchats': {
+        if (!TheCreator) return StickOwner()
+        let chats = await SenseiOfc.chats.all()
+        for (let chat of chats) {
+            await SenseiOfc.clearChat(chat.jid)
+        }
+        replygc('Todos los chats han sido eliminados.')
+    }
+        break
 case 'savecontact': case 'guardarcontacto': case 'svcontact': {
     if (!m.isGroup) return StickGroup()
     if (!(isGroupAdmins || TheCreator)) return StickAdmin()
@@ -4749,7 +4752,7 @@ break
     return replygc(`${themeemoji} *Fact:* ${translatedFact}\n`);
 }
 break
-   case 'quotes':
+   case 'quotes': case 'frase':
   const quotexeony = await axios.get(`https://favqs.com/api/qotd`)
   const textquotes = `*${themeemoji} Frase:* ${await translateToSpanish(quotexeony.data.quote.body)}\n\n*${themeemoji} Autor:* ${await translateToSpanish(quotexeony.data.quote.author)}`
   return replygc(textquotes)
