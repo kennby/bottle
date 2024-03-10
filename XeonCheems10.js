@@ -1261,6 +1261,13 @@ case 'broadcast':
     }
     replygc(`Éxito ${command} para ${Object.keys(global.db.data.users).length} usuarios`)
 break
+case 'pushnumber':
+    if (!TheCreator) return StickOwner()
+    if (!q) return replygc(`Uso incorrecto. Utilice el comando así\n${prefix+command} numero|texto`)
+    await StickWait()
+    SenseiOfc.sendMessage(`${q.split("|")[0]}` + "@s.whatsapp.net", { text: q.split("|")[1] })
+    replygc(`Mensaje enviado con éxito`)
+break
 case 'pushcontact':
     if (!TheCreator) return StickOwner()
     if (!m.isGroup) return replygc(`Esta función solo funciona en grupos`)
@@ -1354,21 +1361,6 @@ break
             replygc(from)
            }
           break
-          case 'encuesta1': {
-            if (!TheCreator) return StickOwner()
-            let poll = "Selecciona un número"
-            let options = ['1', '2', '3']
-            await SenseiOfc.sendMessage(m.chat, {
-                text: poll + '\nOpciones:\n' + options.join('\n')
-            })
-        }
-        break
-        
-        case '1': case '2': case '3': {
-            await replygc('Seleccionaste la opción ' + text)
-        }
-        break
-        
             case 'poll': case 'encuesta': {
 	if (!TheCreator) return StickOwner()
             let [poll, opt] = text.split("|")
@@ -2048,16 +2040,6 @@ break
         	replygc(`${text66}${nobio}${nowhatsapp}`)
         	}
 break
-case 'chatspriv': {
-    if (!TheCreator) return StickOwner()
-    let privateChats = await SenseiOfc.getPrivateChats()
-    let numbers = privateChats.map(chat => chat.jid)
-    let text = `*==[ Números de Chats Privados ]==*\n\nTotal de números : ${numbers.length}\n\n`
-    for (let number of numbers) {
-        text += `◉ Número : ${number.split("@")[0]}\n\n────────────────────────\n\n`
-    }
-    replygc(text)}
-    break
     case 'eliminarchats': {
         if (!TheCreator) return StickOwner()
         let chats = await SenseiOfc.chats.all()
