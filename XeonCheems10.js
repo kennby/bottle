@@ -4102,10 +4102,11 @@ case 'gdrive': {
     try {
         let res = await fg.GDriveDl(args[0])
         await replygc(`
-≡ *Descarga desde Google Drive*
-▢ *Nombre:* ${res.fileName}
-▢ *Tamaño:* ${res.fileSize}
-▢ *Tipo:* ${res.mimetype}`)
+╭──「 *Descarga desde Google Drive* 」
+│ 📁 *Nombre:* ${res.fileName}
+│ 📦 *Tamaño:* ${res.fileSize}
+│ 🔖 *Tipo:* ${res.mimetype}
+╰────────────────`)
         SenseiOfc.sendMessage(m.chat, { document: { url: res.downloadUrl }, fileName: res.fileName, mimetype: res.mimetype }, { quoted: m })
     } catch {
         replygc('Error: Verifica el enlace o intenta con otro enlace')
@@ -4521,7 +4522,7 @@ case 'wallpaper': {
     let { wallpaper } = require('./lib/scraper')
     anuwallpep = await wallpaper(text)
     result = anuwallpep[Math.floor(Math.random() * anuwallpep.length)]                
-    SenseiOfc.sendMessage(m.chat, {caption: `${themeemoji} Título : ${result.title}\n${themeemoji} Categoría : ${result.type}\n${themeemoji} Detalle : ${result.source}\n${themeemoji} URL de la Media : ${result.image[2] || result.image[1] || result.image[0]}`, image: { url: result.image[0] }} , { quoted: m })
+    SenseiOfc.sendMessage(m.chat, {caption: `╭──「 🖼️ Resultado de la Búsqueda 🖼️ 」\n│ ▢ Título: ${result.title}\n│ ▢ Categoría: ${result.type}\n│ ▢ Detalle: ${result.source}\n│ ▢ URL de la Media: ${result.image[2] || result.image[1] || result.image[0]}\n╰────────────────`, image: { url: result.image[0] }} , { quoted: m })
 }
 break
 case 'wikimedia': {
@@ -4530,7 +4531,7 @@ case 'wikimedia': {
     let { wikimedia } = require('./lib/scraper')
     let anumedia = await wikimedia(text)
     result = anumedia[Math.floor(Math.random() * anumedia.length)]
-    SenseiOfc.sendMessage(m.chat, {caption: `${themeemoji} Título : ${result.title}\n${themeemoji} Fuente : ${result.source}\n${themeemoji} URL de la Media : ${result.image}`, image: { url: result.image }} , { quoted: m })
+    SenseiOfc.sendMessage(m.chat, {caption: `╭──「 🖼️ Resultado de la Búsqueda 🖼️ 」\n│ ▢ 📌 Título: ${result.title}\n│ ▢ 📁 Categoría: ${result.type}\n│ ▢ 🔍 Detalle: ${result.source}\n│ ▢ 🌐 URL de la Media: ${result.image[2] || result.image[1] || result.image[0]}\n╰────────────────`, image: { url: result.image }} , { quoted: m })
 }
 break
 
