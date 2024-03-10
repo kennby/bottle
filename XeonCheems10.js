@@ -1125,7 +1125,6 @@ case 'reportbug': {
 }
 break
 case 'update':
-case 'update':
 case 'actualizar':
     try {
         execSync('git checkout -- .');
@@ -1137,11 +1136,7 @@ case 'actualizar':
         }
     } catch(error) { 
         console.error(error);
-        let errorMessage2 = '🚩 *Ocurrió un fallo. Por favor, inténtalo de nuevo más tarde*';
-        if (error.message) {
-            errorMessage2 += '\n*- Mensaje de error:* ' + error.message;
-        }
-        await replygc(m.chat, errorMessage2, m);
+        await replygc(m.chat, '🚩 *Ocurrió un fallo. Por favor, inténtalo de nuevo más tarde*\n*- Mensaje de error:* ' + error.message, m);
     }
 break
 case 'reiniciar':
