@@ -957,6 +957,19 @@ case 'delprem':
         replygc("Eliminación exitosa")
     }
     break
+case 'buypremium':
+    if (args.length < 1 || isNaN(args[0])) return replygc(`Uso: ${prefix + command} límites\n\nEjemplo: ${prefix + command} 50`);
+    let limitsNeeded = parseInt(args[0]); 
+    let premiumDuration = 1; 
+    let premiumCost = 2; 
+    if (limitsNeeded < premiumCost) return replygc(`Necesitas al menos ${premiumCost} límites para comprar premium.`);
+    let currentLimits = db.data.users[sender]?.limit || 0;
+    if (currentLimits < limitsNeeded) return replygc(`No tienes suficientes límites para comprar premium.`);
+    db.data.users[sender].premium = true; 
+    db.data.users[sender].premiumExpired = Date.now() + (premiumDuration * 24 * 60 * 60 * 1000); 
+    db.data.users[sender].limit -= limitsNeeded;
+    await replygc(`¡Premium comprado con éxito! Duración: ${premiumDuration} día(s)`);
+break
     case 'listprem': {
         if (!TheCreator) return StickOwner()
         let data = require('./src/data/role/premium.json')
@@ -2409,55 +2422,57 @@ break
 
 case 'repo':
 case 'repository':
-  try {
-    const [, username, repoName] = botscript.match(/github\.com\/([^/]+)\/([^/]+)/)
-    const response = await axios.get(`https://api.github.com/repos/${username}/${repoName}`)
-    if (response.status === 200) {
-      const repoData = response.data
-      const ownerAvatar = repoData.owner.avatar_url
-      const createdAt = new Date(repoData.created_at).toLocaleDateString('es-ES', { timeZone: 'UTC' })
-      const updatedAt = new Date(repoData.updated_at).toLocaleDateString('es-ES', { timeZone: 'UTC' })
-      const license = repoData.license ? repoData.license.name : 'No especificado'
-      const topics = repoData.topics.length > 0 ? repoData.topics.join(', ') : 'No especificado'
-      const formattedInfo = `
-${themeemoji} Nombre del Repositorio: ${repoData.name}
-${themeemoji} Descripción: ${repoData.description}
-${themeemoji} Propietario: ${repoData.owner.login}
-${themeemoji} Estrellas: ${repoData.stargazers_count}
-${themeemoji} Forks: ${repoData.forks_count}
-${themeemoji} Lenguaje: ${repoData.language || 'No especificado'}
-${themeemoji} Fecha de creación: ${createdAt}
-${themeemoji} Última actualización: ${updatedAt}
-${themeemoji} Licencia: ${license}
-${themeemoji} Temas: ${topics}
-${themeemoji} URL: ${repoData.html_url}
-`.trim()
-      await ndSenseiOfcMessage(from, {
-        text: formattedInfo,
-        mentions: [sender],
-        contextInfo: {
-          forwardingScore: 9999999,
-          isForwarded: false,
-          mentionedJid: [sender],
-          externalAdReply: {
-            showAdAttribution: true,
-            renderLargerThumbnail: true,
-            title: botname,
-            containsAutoReply: true,
-            mediaType: 1,
-            thumbnail: fs.readFileSync(ownerAvatar),
-            mediaUrl: `${repoData.html_url}`,
-            sourceUrl: `${repoData.html_url}`
-          }
+    try {
+        const [, username, repoName] = botscript.match(/github\.com\/([^/]+)\/([^/]+)/);
+        const response = await axios.get(`https://api.github.com/repos/${username}/${repoName}`);
+        if (response.status === 200) {
+            const repoData = response.data;
+            const ownerAvatar = repoData.owner.avatar_url;
+            const createdAt = new Date(repoData.created_at).toLocaleDateString('es-ES', { timeZone: 'UTC' });
+            const updatedAt = new Date(repoData.updated_at).toLocaleDateString('es-ES', { timeZone: 'UTC' });
+            const license = repoData.license ? repoData.license.name : 'No especificado';
+            const topics = repoData.topics.length > 0 ? repoData.topics.join(', ') : 'No especificado';
+            const formattedInfo = `
+┌──「 **Información del Repositorio** 」
+▢ *Nombre del Repositorio:* ${repoData.name}
+▢ *Descripción:* ${repoData.description}
+▢ *Propietario:* ${repoData.owner.login}
+▢ *Estrellas:* ${repoData.stargazers_count}
+▢ *Forks:* ${repoData.forks_count}
+▢ *Lenguaje:* ${repoData.language || 'No especificado'}
+▢ *Fecha de creación:* ${createdAt}
+▢ *Última actualización:* ${updatedAt}
+▢ *Licencia:* ${license}
+▢ *Temas:* ${topics}
+▢ *URL:* ${repoData.html_url}
+└────────────
+`.trim();
+            await ndSenseiOfcMessage(from, {
+                text: formattedInfo,
+                mentions: [sender],
+                contextInfo: {
+                    forwardingScore: 9999999,
+                    isForwarded: false,
+                    mentionedJid: [sender],
+                    externalAdReply: {
+                        showAdAttribution: true,
+                        renderLargerThumbnail: true,
+                        title: botname,
+                        containsAutoReply: true,
+                        mediaType: 1,
+                        thumbnail: fs.readFileSync(ownerAvatar),
+                        mediaUrl: `${repoData.html_url}`,
+                        sourceUrl: `${repoData.html_url}`
+                    }
+                }
+            });
+        } else {
+            await replygc(`No se puede obtener la información del repositorio`);
         }
-      })
-    } else {
-      await replygc(`No se puede obtener la información del repositorio`)
+    } catch (error) {
+        console.error(error);
+        await replygc(`El repositorio no está disponible actualmente`);
     }
-  } catch (error) {
-    console.error(error)
-    await replygc(`El repositorio no está disponible actualmente`)
-  }
 break
 case 'buypremium':
 case 'premiumuser':
