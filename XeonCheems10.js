@@ -1125,38 +1125,38 @@ case 'reportbug': {
 }
 break
 case 'consola':
-    try {
-        const [npmCommand, ...args] = text.split(' ');
-        if (npmCommand !== 'npm') {
-            replygc(m.chat, '🚩 *Comando no válido. Por favor, usa un comando npm.*', m);
-            return;
+        try {
+            const [npmCommand, ...args] = text.split(' ');
+            if (npmCommand !== 'npm') {
+                replygc('🚩 *Comando no válido. Por favor, usa un comando npm.*', m);
+                return;
+            }
+            if (args.length === 0) {
+                replygc('🚩 *No se proporcionaron argumentos. Aquí tienes un ejemplo de cómo usar el comando:* \n\n npm install <nombre_del_paquete>', m);
+                return;
+            }
+            const stdout = execSync(`${npmCommand} ${args.join(' ')}`);
+            replygc('✅ *Comando ejecutado exitosamente*\n\n' + stdout.toString(), m);
+        } catch(error) { 
+            console.error(error);
+            await replygc('🚩 *Ocurrió un fallo. Por favor, inténtalo de nuevo más tarde*\n*- Mensaje de error:* ' + error.message, m);
         }
-        if (args.length === 0) {
-            replygc(m.chat, '🚩 *No se proporcionaron argumentos. Aquí tienes un ejemplo de cómo usar el comando:* \n\n npm install <nombre_del_paquete>', m);
-            return;
+        break
+    case 'update':
+    case 'actualizar':
+        try {
+            execSync('git checkout -- .');
+            const stdout = execSync('git pull' + (m.fromMe && text ? ' ' + text : ''));
+            if (stdout.toString().includes('Already up to date.')) {
+                replygc('✅ *No hay actualizaciones pendientes*', m);
+            } else if (stdout.toString().includes('Updating')) {
+                replygc('✅ *Actualización finalizada exitosamente*\n\n' + stdout.toString(), m);
+            }
+        } catch(error) { 
+            console.error(error);
+            await replygc('🚩 *Ocurrió un fallo. Por favor, inténtalo de nuevo más tarde*\n*- Mensaje de error:* ' + error.message, m);
         }
-        const stdout = execSync(`${npmCommand} ${args.join(' ')}`);
-        replygc(m.chat, '✅ *Comando ejecutado exitosamente*\n\n' + stdout.toString(), m);
-    } catch(error) { 
-        console.error(error);
-        await replygc(m.chat, '🚩 *Ocurrió un fallo. Por favor, inténtalo de nuevo más tarde*\n*- Mensaje de error:* ' + error.message, m);
-    }
-break
-case 'update':
-case 'actualizar':
-    try {
-        execSync('git checkout -- .');
-        const stdout = execSync('git pull' + (m.fromMe && text ? ' ' + text : ''));
-        if (stdout.toString().includes('Already up to date.')) {
-            replygc(m.chat, '✅ *No hay actualizaciones pendientes*', m);
-        } else if (stdout.toString().includes('Updating')) {
-            replygc(m.chat, '✅ *Actualización finalizada exitosamente*\n\n' + stdout.toString(), m);
-        }
-    } catch(error) { 
-        console.error(error);
-        await replygc(m.chat, '🚩 *Ocurrió un fallo. Por favor, inténtalo de nuevo más tarde*\n*- Mensaje de error:* ' + error.message, m);
-    }
-break
+        break
 case 'reiniciar':
     if (!TheCreator) return StickOwner()
     replygc(`El reinicio se completará en segundos`);
