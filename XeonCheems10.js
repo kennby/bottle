@@ -1124,6 +1124,20 @@ case 'reportbug': {
     })
 }
 break
+case 'consola':
+    try {
+        const [npmCommand, ...args] = text.split(' ');
+        if (npmCommand !== 'npm') {
+            replygc(m.chat, '🚩 *Comando no válido. Por favor, usa un comando npm.*', m);
+            return;
+        }
+        const stdout = execSync(`${npmCommand} ${args.join(' ')}`);
+        replygc(m.chat, '✅ *Comando ejecutado exitosamente*\n\n' + stdout.toString(), m);
+    } catch(error) { 
+        console.error(error);
+        await replygc(m.chat, '🚩 *Ocurrió un fallo. Por favor, inténtalo de nuevo más tarde*\n*- Mensaje de error:* ' + error.message, m);
+    }
+break
 case 'update':
 case 'actualizar':
     try {
