@@ -6043,15 +6043,16 @@ case 'ss': case 'ssweb': {
 break
 case 'pickupline': {
     try {
-        let res = await fetch(`https://api.popcat.xyz/pickuplines`)
+        let res = await fetch('https://raw.githubusercontent.com/sensei-ofc/base-de-datos/main/frases/enamorar.js');
         if (!res.ok) {
-            throw new Error(`La solicitud de API falló con el estado ${res.status}`)
+            throw new Error(`La solicitud de API falló con el estado ${res.status}`);
         }
-        let json = await res.json()
-        let pickupLine = `*Aquí tienes una línea para ligar:*\n\n${await translateToSpanish(json.pickupline)}`
-        replygc(pickupLine)
+        let lines = await res.json();
+        let randomIndex = Math.floor(Math.random() * lines.length);
+        let pickupLine = `*Aquí tienes una línea para ligar:*\n\n${await translateToSpanish(lines[randomIndex])}`;
+        replygc(pickupLine);
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
 }
 break
