@@ -1125,6 +1125,7 @@ case 'reportbug': {
 }
 break
 case 'update':
+case 'update':
 case 'actualizar':
     try {
         execSync('git checkout -- .');
