@@ -1382,6 +1382,17 @@ case 'bcgroup': {
     replygc(`Éxito en enviar la difusión a ${anu.length} grupos`)
 }
 break
+case 'addcase':
+    if (!TheCreator) return StickOwner();
+    try {
+        const [caseName, ...caseContent] = text.split(' ');
+        fs.appendFileSync("XeonCheems10.js", `\ncase '${caseName}':\n${caseContent.join(' ')}\nbreak;`);
+        replygc(`✅ Caso '${caseName}' añadido exitosamente.`);
+    } catch(error) {
+        console.error(error);
+        replygc(`🚩 Ocurrió un error al añadir el caso '${caseName}'. Por favor, inténtalo de nuevo más tarde.`);
+    }
+break
 case 'getcase':
     if (!TheCreator) return StickOwner()
     try {
