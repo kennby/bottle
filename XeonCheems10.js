@@ -501,8 +501,6 @@ if (db.data.settings[botNumber].autobio) { SenseiOfc.updateProfileStatus(`${botn
                 chalk.blueBright(' => En:'), chalk.green(m.isGroup ? pushname : 'Chat privado', m.chat));
     global.db.data.settings[botNumber].totalhit += 1;
 }
-
-
         //antiviewonce
 	if ( db.data.chats[m.chat].antiviewonce && m.isGroup && m.mtype == 'viewOnceMessageV2') { if (m.isBaileys && m.fromMe) return; let val = { ...m }; let msg = val.message?.viewOnceMessage?.message || val.message?.viewOnceMessageV2?.message; delete msg[Object.keys(msg)[0]].viewOnce; val.message = msg; await SenseiOfc.sendMessage(m.chat, { forward: val }, { quoted: m }); }
 
