@@ -5504,7 +5504,7 @@ case 'trap' :
 if (!m.isGroup) return StickGroup()
 if (!AntiNsfw) return replygc(mess.nsfw)
 await StickWait()
- waifudd = await axios.get(`https://waifu.pics/api/nsfw/${command}`)       
+ waifudd = await axios.get(`https://waifu.pics/api/nsfw/trap`)       
 SenseiOfc.sendMessage(m.chat, { caption: mess.success, image: { url:waifudd.data.url } }, { quoted: m })
 break
 case 'hentai-neko' :
