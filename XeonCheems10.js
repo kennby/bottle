@@ -1143,20 +1143,21 @@ case 'consola':
         }
         break
     case 'update':
-    case 'actualizar':
-        try {
-            execSync('git checkout -- .');
-            const stdout = execSync('git pull' + (m.fromMe && text ? ' ' + text : ''));
-            if (stdout.toString().includes('Already up to date.')) {
-                replygc('✅ *No hay actualizaciones pendientes*', m);
-            } else if (stdout.toString().includes('Updating')) {
-                replygc('✅ *Actualización finalizada exitosamente*\n\n' + stdout.toString(), m);
-            }
-        } catch(error) { 
-            console.error(error);
-            await replygc('🚩 *Ocurrió un fallo. Por favor, inténtalo de nuevo más tarde*\n*- Mensaje de error:* ' + error.message, m);
+case 'actualizar':
+    try {
+        execSync('git checkout -- .');
+        const stdout = execSync('git pull' + (m.fromMe && text ? ' ' + text : ''));
+        if (stdout.toString().includes('Already up to date.')) {
+            replygc('✅ *No hay actualizaciones pendientes*', m);
+        } else if (stdout.toString().includes('Updating')) {
+            const updatedFiles = stdout.toString().split('\n').filter(line => line.includes('|')).join('\n');
+            replygc('✅ *Actualización finalizada exitosamente*\n\n' + updatedFiles, m);
         }
-        break
+    } catch(error) { 
+        console.error(error);
+        await replygc('🚩 *Ocurrió un fallo. Por favor, inténtalo de nuevo más tarde*\n*- Mensaje de error:* ' + error.message, m);
+    }
+break
 case 'reiniciar':
     if (!TheCreator) return StickOwner()
     replygc(`El reinicio se completará en segundos`);
