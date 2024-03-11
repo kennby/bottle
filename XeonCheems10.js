@@ -3212,20 +3212,6 @@ case 'qc': case 'text': {
     }
 }
 break
-    case 'ephemeral': {
-                if (!m.isGroup) return StickGroup()
-                if (!isBotAdmins) return StickBotAdmin()
-                if (!isAdmins) return StickAdmin()
-                if (!text) return replygc('envie activar o descartivcar lso mensajes tenporales')
-                if (args[0] === 'on') {
-                    await SenseiOfc.sendMessage(m.chat, { disappearingMessagesInChat: WA_DEFAULT_EPHEMERAL })
-                    await replygc(`Done`)
-                } else if (args[0] === 'off') {
-                    await SenseiOfc.sendMessage(m.chat, { disappearingMessagesInChat: false })
-                    await replygc(`Done`)
-                }
-            }
-            break
             case 'delete': case 'del': case 'd':{
             	 let key = {}
  try {
