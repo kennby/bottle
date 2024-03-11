@@ -3708,14 +3708,6 @@ case 'buscaramigo': {
   }, 9000)
 }
 break
-case 'q':
-case 'quoted': {
-    if (!m.quoted) return replygc('¡Responde al mensaje!')
-    let xeonquotx = await SenseiOfc.serializeM(await m.getQuotedObj())
-    if (!xeonquotx.quoted) return replygc('El mensaje al que estás respondiendo no fue enviado por el bot')
-    await xeonquotx.quoted.copyNForward(m.chat, true)
-}
-break
 case 'obfus':
 case 'obfuscate': {
     if (!q) return replygc(`Ejemplo: ${prefix + command} const xeonbot = require('baileys')`)
