@@ -3808,7 +3808,8 @@ case 'ytmp4': case 'ytvideo': {
 *${themeemoji}Duración:* ${vid.duration}
 *${themeemoji}Calidad:* ${vid.quality}`
   await SenseiOfc.sendMessage(m.chat, {
-    video: { url: vid.videoUrl },
+    document: { url: vid.videoUrl },
+    mimetype: 'video/mp4',
     caption: ytc
   }, { quoted: m })
 }
@@ -3840,71 +3841,75 @@ case 'songdoc': {
 }
 break
 case 'play2doc':
-  if (!text) return replygc(`Ejemplo : ${prefix + command} anime estado de whatsapp`)
-  let yts = require("yt-search")
-  let xeonytdl = require('./lib/ytdl')
+    if (!text) return replygc(`Ejemplo : ${prefix + command} anime estado de whatsapp`)
+    let ytsdoc = require("yt-search")
+    let xeonytdldoc = require('./lib/ytdl')
+    
+    try {
+      let search = await ytsdoc(text)
+      let anup4k = search.videos[0]
+      
+      if (!anup4k) return replygc('No se encontraron resultados para la búsqueda.')
   
-  try {
-    let search = await yts(text)
-    let anup4k = search.videos[0]
-    
-    if (!anup4k) return replygc('No se encontraron resultados para la búsqueda.')
-
-    const vid = await xeonytdl.mp4(anup4k.url)
-    
-    const ytc = `
-    *${themeemoji}Título:* ${vid.title}
-    *${themeemoji}Fecha:* ${vid.date}
-    *${themeemoji}Duración:* ${vid.duration}
-    *${themeemoji}Calidad:* ${vid.quality}`
-    
-    await SenseiOfc.sendMessage(m.chat, {
-      document: fs.readFileSync(vid.path),
-      caption: ytc
-    }, { quoted: m })
-    
-    await fs.unlinkSync(vid.path)
-  } catch (error) {
-    console.error(error);
-  }
-  break
-case 'ytmp3doc':
-case 'ytaudiodoc': {
-  let xeonaudp3 = require('./lib/ytdl')
-  if (args.length < 1 || !isUrl(text) || !xeonaudp3.isYTUrl(text)) return replygc(`¿Dónde está el enlace de YouTube?\nEjemplo: ${prefix + command} https://youtube.com/shorts/YQf-vMjDuKY?feature=share`)
-  let audio = await xeonaudp3.mp3(text)
-  await SenseiOfc.sendMessage(m.chat, {
-    document: fs.readFileSync(audio.path),
-    mimetype: 'audio/mp4',
-    contextInfo: {
-      externalAdReply: {
-        title: audio.meta.title,
-        body: botname,
-        thumbnail: await fetchBuffer(audio.meta.image),
-        mediaType: 2,
-        mediaUrl: text,
-      }
-    },
-  }, { quoted: m })
-  await fs.unlinkSync(audio.path)
-}
-break
-case 'ytmp4doc':
-case 'ytvideodoc': {
-  const xeonvidoh = require('./lib/ytdl')
-  if (args.length < 1 || !isUrl(text) || !xeonvidoh.isYTUrl(text)) replygc(`¿Dónde está el enlace?\n\nEjemplo: ${prefix + command} https://youtube.com/watch?v=PtFMh6Tccag%27 128kbps`)
-  const vid = await xeonvidoh.mp4(text)
-  const ytc = `
+      const vid = await xeonytdldoc.mp4(anup4k.url)
+      const ytc = `
 *${themeemoji}Título:* ${vid.title}
 *${themeemoji}Fecha:* ${vid.date}
 *${themeemoji}Duración:* ${vid.duration}
 *${themeemoji}Calidad:* ${vid.quality}`
-  await SenseiOfc.sendMessage(m.chat, {
-    document: fs.readFileSync(vid.path),
-    caption: ytc
-  }, { quoted: m })
-}
-break
+      await SenseiOfc.sendMessage(m.chat, {
+          document: { url: vid.videoUrl },
+          fileName: vid.title + '.mp4',
+          mimetype: 'video/mp4',
+          caption: ytc
+        }, { quoted: m })
+      
+      await fs.unlinkSync(vid.path)
+    } catch (error) {
+      console.error(error);
+    }
+    break
+
+case 'ytmp3doc': case 'ytaudiodoc': {
+        let xeonaudp3 = require('./lib/ytdl')
+        if (args.length < 1 || !isUrl(text) || !xeonaudp3.isYTUrl(text)) return replygc(`¿Dónde está el enlace de YouTube?\nEjemplo: ${prefix + command} https://youtube.com/shorts/YQf-vMjDuKY?feature=share`)
+        let audio = await xeonaudp3.mp3(text)
+        await SenseiOfc.sendMessage(m.chat, {
+          document: fs.readFileSync(audio.path),
+          fileName: audio.meta.title + '.mp3',
+          mimetype: 'audio/mp3',
+          contextInfo: {
+            externalAdReply: {
+              title: audio.meta.title,
+              body: botname,
+              thumbnail: await fetchBuffer(audio.meta.image),
+              mediaType: 2,
+              mediaUrl: text,
+            }
+          },
+        }, { quoted: m })
+        await fs.unlinkSync(audio.path)
+      }
+      break
+      
+case 'ytmp4doc': case 'ytvideodoc': {
+        const xeonvidoh = require('./lib/ytdl')
+        if (args.length < 1 || !isUrl(text) || !xeonvidoh.isYTUrl(text)) replygc(`¿Dónde está el enlace?\n\nEjemplo: ${prefix + command} https://youtube.com/watch?v=PtFMh6Tccag%27 128kbps`)
+        const vid = await xeonvidoh.mp4(text)
+        const ytc = `
+*${themeemoji}Título:* ${vid.title}
+*${themeemoji}Fecha:* ${vid.date}
+*${themeemoji}Duración:* ${vid.duration}
+*${themeemoji}Calidad:* ${vid.quality}`
+        await SenseiOfc.sendMessage(m.chat, {
+          document: { url: vid.videoUrl },
+          fileName: vid.title + '.mp4',
+          mimetype: 'video/mp4',
+          caption: ytc
+        }, { quoted: m })
+      }
+      break
+  
 case 'git':
 case 'gitclone':
   if (!args[0]) return replygc(`¿Dónde está el enlace?\nEjemplo:\n${prefix}${command} https://github.com/DGXeon/XeonMedia`)
