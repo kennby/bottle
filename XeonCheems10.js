@@ -941,9 +941,8 @@ case 'addprem':
         replygc("Premium añadido con éxito")
     } else {
         addPremiumUser(args[0] + "@s.whatsapp.net", args[1], premium)
-        replygc("Premium añadido con éxito")
-    }
-    break
+        replygc("Premium añadido con éxito")}
+break
 case 'delprem':
     if (!TheCreator) return StickOwner()
     if (args.length < 1) return replygc(`Uso: ${prefix + command} @etiqueta\n${prefix + command} número\n\nEjemplo: ${prefix + command} 916909137213`)
@@ -1284,7 +1283,7 @@ case 'salir':
 case 'bc':
 case 'broadcast':
     if (!TheCreator) return StickOwner()
-    if (!text) return replygc('¿Texto?')
+    if (!text) return replygc('¿Texto, imagen o video?')
     let teksnya = `${text}\n\n\n\nFecha: ${xdate} ${xtime}`
     for (let i of Object.keys(global.db.data.users)) {
         await sleep(1500)
