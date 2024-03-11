@@ -1337,21 +1337,6 @@ case 'pushcontactv2':
     }
     replygc(`Éxito`)
 break
-case 'silenciar':
-    const filePath = path.join(__dirname, 'src', 'data', 'role', 'silenciar.js');
-    if (!fs.existsSync(filePath)) {
-      fs.writeFileSync(filePath, '{}', 'utf8');
-    }
-    let silencedUsers = require(filePath);
-    silencedUsers[user] = true;
-    fs.writeFileSync(filePath, JSON.stringify(silencedUsers), 'utf8');
-    break
-case 'desilenciar':
-    const filePath = path.join(__dirname, 'src', 'data', 'role', 'silenciar.js');
-    let silencedUsers = require(filePath);
-    delete silencedUsers[user];
-    fs.writeFileSync(filePath, JSON.stringify(silencedUsers), 'utf8');
-    break
 case 'block': case 'ban': {
 	if (!TheCreator) return StickOwner()
 	let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
