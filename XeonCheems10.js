@@ -4254,7 +4254,29 @@ case 'gdrive': {
     }
 }
 break
-
+case 'imagen':
+    const {googleImage} = require('@bochilteam/scraper');
+    async function getImage(query) {
+        try {
+            const image = await fetchJson(`https://api.akuari.my.id/search/googleimage?query=${query}`);
+            const images = image.result;
+            return images[Math.floor(Math.random() * images.length)];
+        } catch {
+            const res = await googleImage(query);
+            return res[Math.floor(Math.random() * res.length)];
+        }
+    }
+    if (!text) {
+        replygc(`ejemplo\n${prefix + command} gatito`);
+        break;
+    }
+    try {
+        const imageUrl = await getImage(text);
+        SenseiOfc.sendMessage(m.chat, { image: { url: imageUrl}, caption: `${text}`}, { quoted: m, ephemeralExpiration: 24*60*100, disappearingMessagesInChat: 24*60*100});
+    } catch (e) {
+        console.log(e);
+    }
+    break
 case 'pinterest': {
     if (!text) return replygc(`Ingresa la consulta`)
     let { pinterest } = require('./lib/scraper')
