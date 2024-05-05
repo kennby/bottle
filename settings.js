@@ -18,7 +18,7 @@ global.botscript = '' //enlace del script
 global.packname = "Sticker By"
 global.author = ""
 global.creator = ""
-global.xprefix = '.'
+global.xprefix = '#'
 global.premium = [""] // Usuario Premium
 global.hituet = 0
 
