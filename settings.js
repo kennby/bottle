@@ -2,24 +2,24 @@ const fs = require('fs')
 const chalk = require('chalk')
 
 //  ────────────────── [ 🌟🛠️ Tarjeta del propietario 🛠️🌟] ──────────────────  \\
-global.ytname = "YT:" //nombre de tu canal de yt
-global.socialm = "GitHub: SenseiOfc" //nombre de tu github o insta
+global.ytname = "" //nombre de tu canal de yt
+global.socialm = "" //nombre de tu github o insta
 global.location = "America, Lima-Peru" //tu ubicación
 
 // 🔄 ────────────────────────── [ NUEVO ] ───────────────────────── 🔄 \\
-global.botname = 'Bottle' //nombre de tu bot
-global.ownernumber = '+51916738232' //número del propietario
-global.ownername = 'SenseiOfc' //nombre del propietario
-global.websitex = "https://youtu.be/"
-global.wagc = "https://www.instagram.com/erik_16_qm/"
-global.themeemoji = '🪀'
-global.wm = "Bot Inc."
-global.botscript = 'https://github.com' //enlace del script
+global.botname = '' //nombre de tu bot
+global.ownernumber = '' //número del propietario
+global.ownername = '' //nombre del propietario
+global.websitex = ""
+global.wagc = ""
+global.themeemoji = ''
+global.wm = ""
+global.botscript = '' //enlace del script
 global.packname = "Sticker By"
-global.author = "Bottle"
-global.creator = "51916738232@s.whatsapp.net"
+global.author = ""
+global.creator = ""
 global.xprefix = '.'
-global.premium = ["51916738232"] // Usuario Premium
+global.premium = [""] // Usuario Premium
 global.hituet = 0
 
 // ──────────────── [ ⚙️ Configuración del bot ] ──────────────── \\
@@ -27,7 +27,7 @@ global.typemenu = 'v8' // tipo de menú 'v1' => 'v8'
 global.typereply = 'v2' // tipo de respuesta 'v1' => 'v3'
 global.autoblocknumber = '92' //establecer código de país para bloqueo automático
 global.antiforeignnumber = '91' //establecer código de país para número extranjero anti
-global.welcome = false //bienvenida/salida en grupos
+global.welcome = true //bienvenida/salida en grupos
 global.anticall = false //el bot bloquea al usuario cuando se llama
 global.autoswview = false //vista de estado/historia automática
 global.adminevent = false //mostrar mensaje de promoción/degradación
@@ -73,4 +73,4 @@ global.setBotInfo = (newBotname, newOwnername, newLocation, newOwnernumber, newy
             console.log(chalk.yellowBright(`${key} actualizado a: ${updates[key]}`))
         }
     }
-}
+        }
